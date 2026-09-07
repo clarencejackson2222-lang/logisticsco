@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jackson CommandOS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --ink: #18211f;
+      --muted: #71807b;
+      --line: #dce5df;
+      --paper: #f5f7f2;
+      --panel: #ffffff;
+      --nav: #1f2d29;
+      --nav-muted: #9cafa8;
+      --lime: #c9f269;
+      --lime-deep: #a5d935;
+      --amber: #efaa4b;
+      --red: #e56d5e;
+      --blue: #789fd8;
+      --shadow: 0 18px 45px rgba(31, 45, 41, .08);
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font-family: 'Manrope', sans-serif; }
+    button { font: inherit; cursor: pointer; }
+    .app { display: grid; grid-template-columns: 246px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar { background: var(--nav); color: white; padding: 28px 18px; display: flex; flex-direction: column; }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 10px 32px; }
+    .brand-mark { width: 31px; height: 31px; border-radius: 8px; background: var(--lime); color: var(--nav); display: grid; place-items: center; font-weight: 800; font-size: 17px; }
+    .brand strong { display: block; letter-spacing: -.03em; font-size: 14px; }
+    .brand small { color: var(--nav-muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+    .nav-label { color: #687d75; font: 500 10px 'DM Mono', monospace; letter-spacing: .13em; text-transform: uppercase; padding: 0 12px 10px; }
+    nav { display: grid; gap: 4px; }
+    .nav-item { border: 0; background: transparent; color: var(--nav-muted); padding: 11px 12px; border-radius: 7px; text-align: left; display: flex; align-items: center; gap: 12px; font-size: 12px; transition: .2s ease; }
+    .nav-item:hover, .nav-item.active { background: #30443d; color: white; }
+    .nav-item.active { box-shadow: inset 3px 0 var(--lime); }
+    .nav-icon { width: 17px; font-size: 14px; text-align: center; color: var(--lime); }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid #354841; padding: 18px 10px 0; }
+    .profile { display: flex; gap: 10px; align-items: center; }
+    .avatar { width: 31px; height: 31px; border-radius: 50%; background: #e2aa7d; color: #553321; display: grid; place-items: center; font-weight: 800; font-size: 11px; }
+    .profile strong { display: block; font-size: 11px; }
+    .profile small { color: var(--nav-muted); font-size: 10px; }
+    .sign-out { margin-left: auto; border: 0; background: transparent; color: var(--nav-muted); font: 9px 'DM Mono', monospace; padding: 4px; }
+    .sign-out:hover { color: white; }
+
+    main { min-width: 0; }
+    .topbar { height: 72px; padding: 0 38px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,.68); }
+    .breadcrumb { color: var(--muted); font: 400 11px 'DM Mono', monospace; letter-spacing: .04em; }
+    .breadcrumb b { color: var(--ink); font-weight: 500; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .icon-btn { border: 1px solid var(--line); background: white; width: 34px; height: 34px; border-radius: 7px; color: var(--muted); position: relative; }
+    .icon-btn:hover { color: var(--ink); border-color: #b7c7bf; }
+    .alert-dot { position: absolute; top: 7px; right: 7px; width: 5px; height: 5px; background: var(--red); border-radius: 50%; }
+    .date-pill { border-left: 1px solid var(--line); padding-left: 14px; color: var(--muted); font: 11px 'DM Mono', monospace; }
+    .content { padding: 36px 38px 48px; max-width: 1540px; }
+    .page-heading { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 29px; }
+    .eyebrow { color: #719466; font: 500 10px 'DM Mono', monospace; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 9px; }
+    h1 { font-size: clamp(25px, 3vw, 36px); letter-spacing: -.06em; line-height: 1; margin: 0; }
+    .heading-note { color: var(--muted); font-size: 12px; margin: 9px 0 0; }
+    .primary { background: var(--ink); color: white; border: 0; border-radius: 6px; padding: 11px 15px; font-size: 11px; font-weight: 700; }
+    .primary:hover { background: #2e403b; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 24px; }
+    .metric { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 19px 19px 16px; box-shadow: 0 4px 18px rgba(31,45,41,.025); }
+    .metric-label { color: var(--muted); font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .06em; }
+    .metric-row { display: flex; justify-content: space-between; align-items: end; margin-top: 11px; }
+    .metric strong { font-size: 28px; letter-spacing: -.06em; line-height: 1; }
+    .metric-change { font: 10px 'DM Mono', monospace; padding: 4px 7px; border-radius: 20px; background: #e8f6d0; color: #568126; }
+    .metric-change.neutral { color: #6b7774; background: #edf1ee; }
+    .metric-change.warn { color: #9d681b; background: #fff0d4; }
+    .metric-foot { border-top: 1px solid #edf1ee; padding-top: 9px; margin-top: 13px; font-size: 10px; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, .8fr); gap: 18px; align-items: start; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+    .panel-header { padding: 17px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); }
+    .panel-title { font-size: 13px; font-weight: 800; letter-spacing: -.02em; }
+    .panel-subtitle { color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .text-btn { border: 0; background: none; color: #6e9862; font: 500 10px 'DM Mono', monospace; }
+    .text-btn:hover { color: var(--ink); }
+    .exception { display: flex; gap: 13px; padding: 15px 20px; border-bottom: 1px solid #edf1ee; align-items: flex-start; }
+    .exception:last-child { border-bottom: 0; }
+    .severity { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex: 0 0 auto; background: var(--red); box-shadow: 0 0 0 4px #fde9e5; }
+    .severity.amber { background: var(--amber); box-shadow: 0 0 0 4px #fff2dc; }
+    .exception-body { min-width: 0; flex: 1; }
+    .exception-body strong { display: block; font-size: 11px; margin-bottom: 4px; }
+    .exception-body p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .exception-time { color: #a0aca7; font: 9px 'DM Mono', monospace; white-space: nowrap; }
+    .status { display: inline-flex; align-items: center; gap: 5px; border-radius: 20px; padding: 4px 8px; font: 10px 'DM Mono', monospace; }
+    .status.live { color: #53831d; background: #eff9dc; }
+    .status.live::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--lime-deep); }
+    .status.warn { color: #a36b1a; background: #fff3de; }
+    .status.neutral { color: #6f7d78; background: #eef2ef; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; text-align: left; }
+    th { color: #879590; font: 10px 'DM Mono', monospace; letter-spacing: .05em; text-transform: uppercase; background: #fbfcfa; padding: 11px 20px; white-space: nowrap; }
+    td { padding: 14px 20px; border-top: 1px solid #edf1ee; font-size: 11px; white-space: nowrap; }
+    td:first-child { font-weight: 700; }
+    .route { color: var(--muted); font-size: 10px; }
+    .vehicle { display: flex; align-items: center; gap: 9px; }
+    .truck-icon { width: 28px; height: 28px; border: 1px solid var(--line); background: #f4f8f2; border-radius: 6px; display: grid; place-items: center; color: #75945d; font-size: 14px; }
+    .lower { margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, .8fr); gap: 18px; }
+    .sop-list { padding: 3px 20px 9px; }
+    .sop-item { display: flex; align-items: center; gap: 11px; padding: 13px 0; border-bottom: 1px solid #edf1ee; }
+    .sop-item:last-child { border-bottom: 0; }
+    .sop-icon { width: 27px; height: 27px; border-radius: 6px; display: grid; place-items: center; background: #f0f7df; color: #668c3b; font: 12px 'DM Mono', monospace; }
+    .sop-name { flex: 1; font-size: 11px; font-weight: 700; }
+    .sop-name small { display: block; color: var(--muted); font-size: 9px; font-weight: 400; margin-top: 3px; }
+    .progress { width: 70px; height: 4px; background: #e7eee9; border-radius: 4px; overflow: hidden; }
+    .progress i { display: block; height: 100%; background: var(--lime-deep); }
+    .sop-item .text-btn { padding: 4px; }
+    .activity { padding: 2px 20px 12px; }
+    .activity-row { display: grid; grid-template-columns: 27px 1fr auto; gap: 10px; padding: 13px 0; border-bottom: 1px solid #edf1ee; align-items: center; }
+    .activity-row:last-child { border-bottom: 0; }
+    .activity-dot { width: 8px; height: 8px; background: var(--blue); border-radius: 50%; margin-left: 9px; }
+    .activity-row strong { font-size: 10px; display: block; }
+    .activity-row small { color: var(--muted); font-size: 9px; display: block; margin-top: 3px; }
+    .activity-row time { color: #a0aca7; font: 9px 'DM Mono', monospace; }
+    .toast { position: fixed; right: 28px; bottom: 26px; background: var(--nav); color: white; border-radius: 7px; box-shadow: var(--shadow); padding: 13px 16px; font-size: 11px; transform: translateY(120px); opacity: 0; transition: .25s ease; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .overlay { position: fixed; inset: 0; background: rgba(24,33,31,.42); display: grid; place-items: center; padding: 20px; opacity: 0; pointer-events: none; transition: .2s ease; z-index: 10; }
+    .overlay.open { opacity: 1; pointer-events: auto; }
+    .modal { width: min(720px, 100%); max-height: min(720px, 92vh); overflow: auto; background: var(--panel); border-radius: 10px; box-shadow: 0 24px 70px rgba(24,33,31,.25); transform: translateY(12px); transition: .2s ease; }
+    .overlay.open .modal { transform: translateY(0); }
+    .modal-header { padding: 20px 22px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: flex-start; }
+    .modal-header h2 { margin: 0; font-size: 19px; letter-spacing: -.04em; }
+    .modal-header p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .close-btn { border: 0; background: #f0f4ef; border-radius: 6px; width: 30px; height: 30px; color: var(--muted); font-size: 18px; }
+    .modal-body { padding: 20px 22px 22px; }
+    .library-tools { display: flex; gap: 9px; margin-bottom: 14px; }
+    .search-field, .field, .select-field { border: 1px solid var(--line); background: #fbfcfa; border-radius: 6px; padding: 10px 11px; color: var(--ink); font: 11px 'Manrope', sans-serif; outline: none; }
+    .search-field { flex: 1; }
+    .search-field:focus, .field:focus, .select-field:focus { border-color: #9fba8e; box-shadow: 0 0 0 3px #eff7e8; }
+    .filter-btn { border: 1px solid var(--line); background: white; border-radius: 6px; padding: 0 12px; color: var(--muted); font: 10px 'DM Mono', monospace; }
+    .filter-btn.active { background: #eef8dc; border-color: #d3e8ab; color: #5c7e32; }
+    .library-row { display: flex; align-items: center; gap: 12px; border-top: 1px solid #edf1ee; padding: 14px 4px; }
+    .library-row .sop-name { flex: 1; }
+    .type-tag { padding: 4px 7px; border-radius: 20px; font: 9px 'DM Mono', monospace; color: #6f7d78; background: #eef2ef; }
+    .type-tag.extreme { color: #a04e42; background: #fce9e5; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-field { display: grid; gap: 6px; }
+    .form-field.full { grid-column: 1 / -1; }
+    .form-field label { color: var(--muted); font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .04em; }
+    textarea.field { min-height: 88px; resize: vertical; }
+    .modal-footer { padding: 14px 22px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 9px; }
+    .secondary { border: 1px solid var(--line); background: white; color: var(--muted); border-radius: 6px; padding: 10px 14px; font-size: 11px; font-weight: 700; }
+    .empty-state { color: var(--muted); font-size: 11px; text-align: center; padding: 24px 0 10px; }
+    .load-board { width: min(980px, 100%); }
+    .load-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
+    .load-tools .search-field { min-width: 220px; }
+    .load-table { width: 100%; border-collapse: collapse; }
+    .load-table th, .load-table td { padding: 12px 8px; text-align: left; }
+    .load-table th { background: transparent; }
+    .load-table td { border-top: 1px solid #edf1ee; }
+    .load-table td:first-child, .load-table th:first-child { padding-left: 4px; }
+    .load-table td:last-child, .load-table th:last-child { padding-right: 4px; }
+    .load-id { font-weight: 800; font-size: 11px; }
+    .load-route { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .load-action { border: 1px solid var(--line); background: white; color: #668c3b; border-radius: 5px; padding: 6px 8px; font: 9px 'DM Mono', monospace; }
+    .load-action:hover { border-color: #a5c282; background: #f4faea; }
+    .load-actions { display: flex; gap: 5px; }
+    .fleet-board { width: min(1040px, 100%); }
+    .fleet-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin-bottom: 16px; }
+    .fleet-stat { border: 1px solid var(--line); border-radius: 7px; padding: 11px 12px; background: #fbfcfa; }
+    .fleet-stat strong { display: block; font-size: 19px; letter-spacing: -.05em; }
+    .fleet-stat span { color: var(--muted); font: 9px 'DM Mono', monospace; text-transform: uppercase; }
+    .fleet-table { width: 100%; border-collapse: collapse; }
+    .fleet-table th, .fleet-table td { padding: 12px 8px; text-align: left; }
+    .fleet-table th { background: transparent; }
+    .fleet-table td { border-top: 1px solid #edf1ee; }
+    .fleet-table td:first-child, .fleet-table th:first-child { padding-left: 4px; }
+    .unit-id { font-size: 11px; font-weight: 800; }
+    .unit-meta { display: block; color: var(--muted); font-size: 9px; margin-top: 3px; }
+    .driver-name { font-size: 10px; font-weight: 700; }
+    .driver-name small { display: block; color: var(--muted); font-size: 9px; font-weight: 400; margin-top: 3px; }
+    .maintenance-due { color: #a36b1a; font-size: 10px; }
+    .maintenance-ok { color: #5e8b2d; font-size: 10px; }
+    .auth-screen { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: var(--nav); }
+    .auth-screen.hidden { display: none; }
+    .auth-card { width: min(390px, 100%); background: var(--panel); border-radius: 10px; padding: 28px; box-shadow: 0 24px 70px rgba(0,0,0,.2); }
+    .auth-card .brand { padding: 0 0 24px; color: var(--ink); }
+    .auth-card .brand small { color: var(--muted); }
+    .auth-card h2 { margin: 0; font-size: 22px; letter-spacing: -.05em; }
+    .auth-card p { color: var(--muted); font-size: 11px; line-height: 1.5; margin: 7px 0 22px; }
+    .auth-form { display: grid; gap: 13px; }
+    .auth-error { color: #a04e42; background: #fce9e5; border-radius: 6px; padding: 9px 10px; font-size: 10px; display: none; }
+    .auth-error.visible { display: block; }
+    .management-board { width: min(980px, 100%); }
+    .management-tabs { display: flex; gap: 7px; margin-bottom: 17px; border-bottom: 1px solid var(--line); padding-bottom: 11px; }
+    .management-tab { border: 1px solid var(--line); background: white; color: var(--muted); border-radius: 6px; padding: 8px 11px; font: 10px 'DM Mono', monospace; }
+    .management-tab.active { background: var(--ink); color: white; border-color: var(--ink); }
+    .management-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-bottom: 17px; }
+    .management-kpi { padding: 13px; border: 1px solid var(--line); border-radius: 7px; background: #fbfcfa; }
+    .management-kpi strong { display: block; font-size: 21px; letter-spacing: -.05em; }
+    .management-kpi span { color: var(--muted); font: 9px 'DM Mono', monospace; text-transform: uppercase; }
+    .management-table { width: 100%; border-collapse: collapse; }
+    .management-table th, .management-table td { padding: 12px 8px; text-align: left; }
+    .management-table th { background: transparent; }
+    .management-table td { border-top: 1px solid #edf1ee; font-size: 10px; }
+    .management-table td:first-child, .management-table th:first-child { padding-left: 4px; }
+    @media (max-width: 1050px) { .app { grid-template-columns: 200px minmax(0, 1fr); } .content, .topbar { padding-left: 25px; padding-right: 25px; } .grid, .lower { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { .app { display: block; } .sidebar { padding: 15px 16px; } .brand { padding-bottom: 14px; } .nav-label, .sidebar-footer { display: none; } nav { display: flex; overflow-x: auto; gap: 5px; } .nav-item { white-space: nowrap; padding: 9px 11px; } .topbar { height: 58px; padding: 0 17px; } .date-pill { display: none; } .content { padding: 25px 17px 38px; } .page-heading { align-items: flex-start; flex-direction: column; gap: 17px; } .metrics { grid-template-columns: repeat(2, 1fr); gap: 9px; } .metric { padding: 14px; } .metric strong { font-size: 23px; } .metric-foot { font-size: 9px; } .panel-header, th, td { padding-left: 14px; padding-right: 14px; } .fleet-summary { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <div class="auth-screen hidden" id="authScreen">
+    <form class="auth-card" id="authForm"><div class="brand"><div class="brand-mark">J</div><div><strong>JACKSON</strong><small>CommandOS</small></div></div><h2>Sign in to operations.</h2><p>Use your CommandOS account to access shared loads, incidents, and company records.</p><div class="auth-form"><div class="form-field"><label for="authEmail">Email</label><input class="field" id="authEmail" type="email" value="owner@jackson.local" required /></div><div class="form-field"><label for="authPassword">Password</label><input class="field" id="authPassword" type="password" placeholder="Development password" required /></div><div class="auth-error" id="authError">Invalid email or password.</div><button class="primary" type="submit">Sign in to CommandOS</button></div></form>
+  </div>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">J</div><div><strong>JACKSON</strong><small>CommandOS</small></div></div>
+      <div class="nav-label">Workspace</div>
+      <nav>
+        <button class="nav-item active"><span class="nav-icon">◈</span>Overview</button>
+        <button class="nav-item"><span class="nav-icon">↗</span>Dispatch</button>
+        <button class="nav-item"><span class="nav-icon">▣</span>Fleet</button>
+        <button class="nav-item"><span class="nav-icon">⌁</span>Loads</button>
+        <button class="nav-item"><span class="nav-icon">▤</span>SOP Center</button>
+        <button class="nav-item"><span class="nav-icon">◒</span>Finance</button>
+      </nav>
+      <div class="nav-label" style="margin-top:28px">Management</div>
+      <nav>
+        <button class="nav-item"><span class="nav-icon">◎</span>People</button>
+        <button class="nav-item"><span class="nav-icon">⌂</span>Warehousing</button>
+        <button class="nav-item"><span class="nav-icon">⚙</span>Settings</button>
+      </nav>
+      <div class="sidebar-footer"><div class="profile"><div class="avatar">CJ</div><div><strong>Clarence Jackson</strong><small>Owner / Admin</small></div><button class="sign-out" id="signOut">SIGN OUT</button></div></div>
+    </aside>
+    <main>
+      <header class="topbar"><div class="breadcrumb">JACKSON LOGISTICS / <b>OVERVIEW</b></div><div class="top-actions"><button class="icon-btn" aria-label="Search">⌕</button><button class="icon-btn" aria-label="Notifications"><span class="alert-dot"></span>♧</button><span class="date-pill">MON, SEP 07 2026 &nbsp; 08:42 CT</span></div></header>
+      <section class="content">
+        <div class="page-heading"><div><div class="eyebrow">Operations control center</div><h1>Good morning, Clarence.</h1><p class="heading-note">Here is the pulse of your network. Two items need attention.</p></div><button class="primary" id="reportBtn">＋ &nbsp; New incident report</button></div>
+        <section class="metrics">
+          <div class="metric"><div class="metric-label">Active fleet</div><div class="metric-row"><strong>42</strong><span class="metric-change">+3 this month</span></div><div class="metric-foot">38 moving &nbsp;·&nbsp; 4 in service</div></div>
+          <div class="metric"><div class="metric-label">Today's revenue</div><div class="metric-row"><strong>$18.6k</strong><span class="metric-change">+8.4%</span></div><div class="metric-foot">$4.2k above daily target</div></div>
+          <div class="metric"><div class="metric-label">On-time delivery</div><div class="metric-row"><strong>96.8%</strong><span class="metric-change">+1.2%</span></div><div class="metric-foot">Based on 31 completed loads</div></div>
+          <div class="metric"><div class="metric-label">Open exceptions</div><div class="metric-row"><strong id="openExceptionCount">02</strong><span class="metric-change warn">Needs review</span></div><div class="metric-foot" id="exceptionSummary">1 high priority &nbsp;·&nbsp; 1 watch</div></div>
+        </section>
+        <div class="grid">
+          <section class="panel"><div class="panel-header"><div><div class="panel-title">Exceptions requiring action</div><div class="panel-subtitle">Prioritized from dispatch, safety, and finance</div></div><button class="text-btn" id="allExceptions">VIEW ALL →</button></div><div id="exceptions"></div></section>
+          <section class="panel"><div class="panel-header"><div><div class="panel-title">Network status</div><div class="panel-subtitle">Live systems and operating regions</div></div><span class="status live">All systems live</span></div><div class="activity"><div class="activity-row"><span class="activity-dot"></span><div><strong>Dispatch network</strong><small>Memphis · Dallas · Little Rock</small></div><time>LIVE</time></div><div class="activity-row"><span class="activity-dot" style="background:var(--lime-deep)"></span><div><strong>ELD + tracking sync</strong><small>42 vehicles reporting</small></div><time>1m ago</time></div><div class="activity-row"><span class="activity-dot" style="background:var(--amber)"></span><div><strong>Invoicing queue</strong><small>7 documents awaiting review</small></div><time>OPEN</time></div></div></section>
+        </div>
+        <div class="lower">
+          <section class="panel"><div class="panel-header"><div><div class="panel-title">Active loads</div><div class="panel-subtitle">Today · dry van network</div></div><button class="text-btn" id="loadsBtn">OPEN LOAD BOARD →</button></div><div class="table-wrap"><table><thead><tr><th>Load / route</th><th>Unit</th><th>Progress</th><th>ETA</th><th>Status</th></tr></thead><tbody><tr><td>#JL-8051 <span class="route">MEM → ATL</span></td><td><div class="vehicle"><span class="truck-icon">▰</span> 204</div></td><td>72%</td><td>11:20 AM</td><td><span class="status live">On track</span></td></tr><tr><td>#JL-8042 <span class="route">DAL → LIT</span></td><td><div class="vehicle"><span class="truck-icon">▰</span> 218</div></td><td>61%</td><td>12:06 PM</td><td><span class="status warn">At risk</span></td></tr><tr><td>#JL-8038 <span class="route">STL → MEM</span></td><td><div class="vehicle"><span class="truck-icon">▰</span> 197</div></td><td>44%</td><td>2:45 PM</td><td><span class="status live">On track</span></td></tr><tr><td>#JL-8029 <span class="route">ATL → BHM</span></td><td><div class="vehicle"><span class="truck-icon">▰</span> 221</div></td><td>16%</td><td>4:10 PM</td><td><span class="status neutral">Loading</span></td></tr></tbody></table></div></section>
+          <section class="panel"><div class="panel-header"><div><div class="panel-title">SOP center</div><div class="panel-subtitle">Quick access for the team</div></div><button class="text-btn" id="sopBtn">BROWSE ALL →</button></div><div class="sop-list"><div class="sop-item"><span class="sop-icon">!</span><div class="sop-name">Major truck accident<small>Extreme · Safety response</small></div><span class="progress"><i style="width:92%"></i></span><button class="text-btn sop-open">OPEN</button></div><div class="sop-item"><span class="sop-icon">↻</span><div class="sop-name">Driver check-in procedure<small>Standard · Dispatch</small></div><span class="progress"><i style="width:68%"></i></span><button class="text-btn sop-open">OPEN</button></div><div class="sop-item"><span class="sop-icon">$</span><div class="sop-name">Detention documentation<small>Standard · Operations</small></div><span class="progress"><i style="width:41%"></i></span><button class="text-btn sop-open">OPEN</button></div></div></section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="overlay" id="sopOverlay" role="dialog" aria-modal="true" aria-labelledby="sopTitle">
+    <div class="modal"><div class="modal-header"><div><h2 id="sopTitle">SOP Center</h2><p>Controlled procedures for every operating condition.</p></div><button class="close-btn" data-close="sopOverlay" aria-label="Close SOP Center">×</button></div><div class="modal-body"><div class="library-tools"><input class="search-field" id="sopSearch" type="search" placeholder="Search procedures, departments, or keywords" /><button class="filter-btn active" data-filter="all">ALL</button><button class="filter-btn" data-filter="standard">STANDARD</button><button class="filter-btn" data-filter="extreme">EXTREME</button></div><div id="sopLibrary"></div></div></div>
+  </div>
+  <div class="overlay" id="incidentOverlay" role="dialog" aria-modal="true" aria-labelledby="incidentTitle">
+    <form class="modal" id="incidentForm"><div class="modal-header"><div><h2 id="incidentTitle">New incident report</h2><p>Capture the event and start the correct response path.</p></div><button type="button" class="close-btn" data-close="incidentOverlay" aria-label="Close incident report">×</button></div><div class="modal-body"><div class="form-grid"><div class="form-field"><label for="incidentType">Incident type</label><select class="select-field" id="incidentType" required><option value="">Select incident type</option><option>Vehicle accident</option><option>Driver unreachable</option><option>Cargo theft</option><option>Mechanical failure</option><option>Customer or workplace incident</option></select></div><div class="form-field"><label for="incidentSeverity">Severity</label><select class="select-field" id="incidentSeverity" required><option value="">Select severity</option><option>High priority</option><option>Watch</option><option>Informational</option></select></div><div class="form-field"><label for="incidentUnit">Unit or load</label><input class="field" id="incidentUnit" placeholder="e.g. Unit 218 / JL-8042" required /></div><div class="form-field"><label for="incidentLocation">Location</label><input class="field" id="incidentLocation" placeholder="City, state or facility" required /></div><div class="form-field full"><label for="incidentDescription">What happened?</label><textarea class="field" id="incidentDescription" placeholder="Describe the event, known risks, and current status" required></textarea></div></div></div><div class="modal-footer"><button type="button" class="secondary" data-close="incidentOverlay">Cancel</button><button class="primary" type="submit">Create incident report</button></div></form>
+  </div>
+  <div class="overlay" id="loadOverlay" role="dialog" aria-modal="true" aria-labelledby="loadTitle">
+    <div class="modal load-board"><div class="modal-header"><div><h2 id="loadTitle">Load board</h2><p>Coordinate active freight across the Jackson network.</p></div><button class="close-btn" data-close="loadOverlay" aria-label="Close load board">×</button></div><div class="modal-body"><div class="load-tools"><input class="search-field" id="loadSearch" type="search" placeholder="Search load, route, customer, or unit" /><button class="filter-btn active" data-load-filter="all">ALL</button><button class="filter-btn" data-load-filter="Booked">BOOKED</button><button class="filter-btn" data-load-filter="In transit">IN TRANSIT</button><button class="filter-btn" data-load-filter="At risk">AT RISK</button></div><div class="table-wrap"><table class="load-table"><thead><tr><th>Load / route</th><th>Customer</th><th>Unit / driver</th><th>Revenue</th><th>Status</th><th>Actions</th></tr></thead><tbody id="loadBoardRows"></tbody></table></div></div></div>
+  </div>
+  <div class="overlay" id="fleetOverlay" role="dialog" aria-modal="true" aria-labelledby="fleetTitle">
+    <div class="modal fleet-board"><div class="modal-header"><div><h2 id="fleetTitle">Fleet &amp; drivers</h2><p>Vehicle readiness, driver status, and maintenance exposure.</p></div><button class="close-btn" data-close="fleetOverlay" aria-label="Close fleet workspace">×</button></div><div class="modal-body"><div class="fleet-summary"><div class="fleet-stat"><strong id="fleetTotal">42</strong><span>Total units</span></div><div class="fleet-stat"><strong id="fleetMoving">38</strong><span>Moving</span></div><div class="fleet-stat"><strong id="fleetService">04</strong><span>In service</span></div><div class="fleet-stat"><strong id="fleetDue">03</strong><span>Maintenance due</span></div></div><div class="load-tools"><input class="search-field" id="fleetSearch" type="search" placeholder="Search unit, driver, VIN, or status" /><button class="filter-btn active" data-fleet-filter="all">ALL</button><button class="filter-btn" data-fleet-filter="Moving">MOVING</button><button class="filter-btn" data-fleet-filter="In service">IN SERVICE</button><button class="filter-btn" data-fleet-filter="Available">AVAILABLE</button></div><div class="table-wrap"><table class="fleet-table"><thead><tr><th>Unit</th><th>Driver</th><th>Vehicle</th><th>Location</th><th>Maintenance</th><th>Status</th></tr></thead><tbody id="fleetRows"></tbody></table></div></div></div>
+  </div>
+  <div class="overlay" id="managementOverlay" role="dialog" aria-modal="true" aria-labelledby="managementTitle">
+    <div class="modal management-board"><div class="modal-header"><div><h2 id="managementTitle">Management workspace</h2><p id="managementSubtitle">Company-wide operating records.</p></div><button class="close-btn" data-close="managementOverlay" aria-label="Close management workspace">×</button></div><div class="modal-body"><div class="management-tabs"><button class="management-tab active" data-management-tab="finance">FINANCE</button><button class="management-tab" data-management-tab="people">PEOPLE</button><button class="management-tab" data-management-tab="warehousing">WAREHOUSING</button><button class="management-tab" data-management-tab="audit">AUDIT</button><button class="management-tab" data-management-tab="users">USERS</button></div><div id="managementContent"></div></div></div>
+  </div>
+  <div class="toast" id="toast">Incident report started. Add details in the new report.</div>
+  <script>
+    const toast = document.getElementById('toast');
+    let toastTimer;
+    function showToast(message) { toast.textContent = message; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2800); }
+    let apiMode = false;
+    let apiIncidents = null;
+    let apiLoads = null;
+    const incidentStorageKey = 'jackson-commandos-incidents';
+    const seedExceptions = [
+      { title: 'Unit 218 · Driver check-in overdue', detail: 'Last location 34 mi outside Little Rock. Check-in window exceeded by 42 minutes.', severity: 'high', time: '08:31' },
+      { title: 'Load #JL-8042 · Appointment risk', detail: 'ETA is trending 26 minutes late. Customer notification has not been sent.', severity: 'watch', time: '08:18' }
+    ];
+    function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]); }
+    function getSavedIncidents() { if (apiIncidents) return apiIncidents; try { return JSON.parse(localStorage.getItem(incidentStorageKey) || '[]'); } catch (error) { return []; } }
+    function renderExceptions() {
+      const savedIncidents = getSavedIncidents();
+      const incidents = savedIncidents.map(incident => ({ title: `${incident.unit} · ${incident.type}`, detail: `${incident.location}. ${incident.description}`, severity: incident.severity === 'High priority' ? 'high' : 'watch', time: incident.time }));
+      const allExceptions = [...incidents.reverse(), ...seedExceptions];
+      document.getElementById('exceptions').innerHTML = allExceptions.map(exception => `<div class="exception"><span class="severity ${exception.severity === 'watch' ? 'amber' : ''}"></span><div class="exception-body"><strong>${escapeHtml(exception.title)}</strong><p>${escapeHtml(exception.detail)}</p></div><span class="exception-time">${escapeHtml(exception.time)}</span></div>`).join('');
+      document.getElementById('openExceptionCount').textContent = String(allExceptions.length).padStart(2, '0');
+      const highCount = allExceptions.filter(exception => exception.severity === 'high').length;
+      const watchCount = allExceptions.length - highCount;
+      document.getElementById('exceptionSummary').textContent = `${highCount} high priority · ${watchCount} watch`;
+    }
+    renderExceptions();
+    const loadStorageKey = 'jackson-commandos-loads';
+    const defaultLoads = [
+      { id: 'JL-8051', origin: 'Memphis, TN', destination: 'Atlanta, GA', customer: 'Delta Supply Co.', unit: '204', driver: 'M. Turner', revenue: '$4,280', status: 'In transit' },
+      { id: 'JL-8042', origin: 'Dallas, TX', destination: 'Little Rock, AR', customer: 'Arkansas Foods', unit: '218', driver: 'A. Brooks', revenue: '$3,940', status: 'At risk' },
+      { id: 'JL-8038', origin: 'St. Louis, MO', destination: 'Memphis, TN', customer: 'MidSouth Retail', unit: '197', driver: 'J. Carter', revenue: '$2,860', status: 'In transit' },
+      { id: 'JL-8029', origin: 'Atlanta, GA', destination: 'Birmingham, AL', customer: 'Pioneer Materials', unit: '221', driver: 'Unassigned', revenue: '$1,920', status: 'Booked' },
+      { id: 'JL-8018', origin: 'Nashville, TN', destination: 'Memphis, TN', customer: 'Horizon Wholesale', unit: '203', driver: 'R. Hayes', revenue: '$1,680', status: 'Delivered' }
+    ];
+    function getLoads() { if (apiLoads) return apiLoads; try { return JSON.parse(localStorage.getItem(loadStorageKey)) || defaultLoads; } catch (error) { return defaultLoads; } }
+    function renderLoads() {
+      const query = document.getElementById('loadSearch').value.toLowerCase().trim();
+      const filter = document.querySelector('[data-load-filter].active').dataset.loadFilter;
+      const loads = getLoads().filter(load => (filter === 'all' || load.status === filter) && `${load.id} ${load.origin} ${load.destination} ${load.customer} ${load.unit} ${load.driver}`.toLowerCase().includes(query));
+      document.getElementById('loadBoardRows').innerHTML = loads.length ? loads.map(load => `<tr><td><span class="load-id">#${escapeHtml(load.id)}</span><span class="load-route">${escapeHtml(load.origin)} → ${escapeHtml(load.destination)}</span></td><td>${escapeHtml(load.customer)}</td><td>${escapeHtml(load.unit)} · ${escapeHtml(load.driver)}</td><td>${escapeHtml(load.revenue)}</td><td><span class="status ${load.status === 'At risk' ? 'warn' : load.status === 'Delivered' ? 'neutral' : 'live'}">${escapeHtml(load.status)}</span></td><td><div class="load-actions">${load.status === 'Booked' ? `<button class="load-action" data-load-action="assign" data-load-id="${load.id}">ASSIGN</button>` : ''}${load.status === 'In transit' || load.status === 'At risk' ? `<button class="load-action" data-load-action="deliver" data-load-id="${load.id}">DELIVER</button>` : ''}</div></td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">No loads match this view.</div></td></tr>';
+      document.querySelectorAll('[data-load-action]').forEach(button => button.addEventListener('click', () => updateLoad(button.dataset.loadId, button.dataset.loadAction)));
+    }
+    function openLoadBoard() { renderLoads(); openOverlay('loadOverlay'); document.getElementById('loadSearch').focus(); }
+    async function updateLoad(loadId, action) { const loads = getLoads(); const load = loads.find(item => item.id === loadId); if (!load) return; const changes = action === 'assign' ? { driver: 'Pending assignment', status: 'Booked' } : { status: 'Delivered' }; Object.assign(load, changes); if (apiMode) { const response = await fetch(`/api/loads/${encodeURIComponent(loadId)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(changes) }); if (!response.ok) { showToast('Load update failed. Try again.'); return; } Object.assign(load, await response.json()); } else { localStorage.setItem(loadStorageKey, JSON.stringify(loads)); } renderLoads(); showToast(action === 'assign' ? `#${loadId} moved to driver assignment` : `#${loadId} marked delivered`); }
+    const fleetStorageKey = 'jackson-commandos-fleet';
+    const defaultFleet = [
+      { unit: '204', vin: '...7K42', driver: 'Marcus Turner', qualification: 'CDL-A · Current', vehicle: '2023 Freightliner Cascadia', location: 'Memphis, TN', maintenance: 'Clear · 1,240 mi', maintenanceDue: false, status: 'Moving' },
+      { unit: '218', vin: '...9P18', driver: 'Andre Brooks', qualification: 'CDL-A · Current', vehicle: '2022 Peterbilt 579', location: 'Little Rock, AR', maintenance: 'Due in 180 mi', maintenanceDue: true, status: 'Moving' },
+      { unit: '197', vin: '...3M77', driver: 'James Carter', qualification: 'CDL-A · Current', vehicle: '2021 Volvo VNL', location: 'West Memphis, AR', maintenance: 'Clear · 2,890 mi', maintenanceDue: false, status: 'Moving' },
+      { unit: '221', vin: '...2T64', driver: 'Unassigned', qualification: 'No driver', vehicle: '2024 Kenworth T680', location: 'Atlanta, GA', maintenance: 'Clear · 4,120 mi', maintenanceDue: false, status: 'Available' },
+      { unit: '203', vin: '...5B90', driver: 'Renee Hayes', qualification: 'CDL-A · Current', vehicle: '2020 International LT', location: 'Jackson, TN', maintenance: 'Inspection due', maintenanceDue: true, status: 'In service' },
+      { unit: '215', vin: '...1D38', driver: 'Darius Wright', qualification: 'Medical card renewal', vehicle: '2022 Freightliner Cascadia', location: 'Dallas, TX', maintenance: 'Due in 420 mi', maintenanceDue: true, status: 'In service' }
+    ];
+    function getFleet() { try { return JSON.parse(localStorage.getItem(fleetStorageKey)) || defaultFleet; } catch (error) { return defaultFleet; } }
+    function renderFleet() {
+      const query = document.getElementById('fleetSearch').value.toLowerCase().trim();
+      const filter = document.querySelector('[data-fleet-filter].active').dataset.fleetFilter;
+      const fleet = getFleet();
+      const rows = fleet.filter(vehicle => (filter === 'all' || vehicle.status === filter) && `${vehicle.unit} ${vehicle.vin} ${vehicle.driver} ${vehicle.vehicle} ${vehicle.location} ${vehicle.status}`.toLowerCase().includes(query));
+      document.getElementById('fleetRows').innerHTML = rows.length ? rows.map(vehicle => `<tr><td><span class="unit-id">Unit ${escapeHtml(vehicle.unit)}</span><span class="unit-meta">VIN ${escapeHtml(vehicle.vin)}</span></td><td><span class="driver-name">${escapeHtml(vehicle.driver)}<small>${escapeHtml(vehicle.qualification)}</small></span></td><td>${escapeHtml(vehicle.vehicle)}</td><td>${escapeHtml(vehicle.location)}</td><td class="${vehicle.maintenanceDue ? 'maintenance-due' : 'maintenance-ok'}">${vehicle.maintenanceDue ? '!' : '✓'} ${escapeHtml(vehicle.maintenance)}</td><td><span class="status ${vehicle.status === 'In service' ? 'warn' : vehicle.status === 'Available' ? 'neutral' : 'live'}">${escapeHtml(vehicle.status)}</span></td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">No fleet records match this view.</div></td></tr>';
+      document.getElementById('fleetTotal').textContent = String(fleet.length).padStart(2, '0');
+      document.getElementById('fleetMoving').textContent = String(fleet.filter(vehicle => vehicle.status === 'Moving').length).padStart(2, '0');
+      document.getElementById('fleetService').textContent = String(fleet.filter(vehicle => vehicle.status === 'In service').length).padStart(2, '0');
+      document.getElementById('fleetDue').textContent = String(fleet.filter(vehicle => vehicle.maintenanceDue).length).padStart(2, '0');
+    }
+    function openFleet() { renderFleet(); openOverlay('fleetOverlay'); document.getElementById('fleetSearch').focus(); }
+    const managementViews = {
+      finance: { title: 'Finance control', subtitle: 'Revenue, payables, and cash movement across the operating group.', kpis: [['$18.6k', "Today's revenue"], ['$4.2k', 'Above daily target'], ['7', 'Invoices awaiting review']], headers: ['Item', 'Owner', 'Amount', 'Status'], rows: [['Load billing · JL-8051', 'Accounting', '$4,280', 'Ready'], ['Fuel spend · Week 36', 'Operations', '$6,940', 'Review'], ['Driver payroll · Sep 07', 'Payroll', '$12,480', 'Scheduled'], ['Broker receivable · 8042', 'Collections', '$3,940', 'Pending']] },
+      people: { title: 'People directory', subtitle: 'Drivers, dispatchers, and support staff assigned to the network.', kpis: [['38', 'Active drivers'], ['6', 'Office team'], ['2', 'Credentials to review']], headers: ['Person', 'Role', 'Home base', 'Status'], rows: [['Marcus Turner', 'Driver · CDL-A', 'Memphis, TN', 'Active'], ['Andre Brooks', 'Driver · CDL-A', 'Little Rock, AR', 'Active'], ['Renee Hayes', 'Driver · CDL-A', 'Jackson, TN', 'Review'], ['Tasha Green', 'Dispatcher', 'Memphis, TN', 'Active']] },
+      warehousing: { title: 'Warehouse network', subtitle: 'Facilities, capacity, and freight handling across the logistics group.', kpis: [['3', 'Active facilities'], ['78%', 'Network utilization'], ['12', 'Inbound appointments']], headers: ['Facility', 'Location', 'Capacity', 'Status'], rows: [['Jackson Central', 'Memphis, TN', '82% occupied', 'Operating'], ['Delta Crossdock', 'Little Rock, AR', '64% occupied', 'Operating'], ['South Terminal', 'Atlanta, GA', '88% occupied', 'Watch'], ['New site review', 'Birmingham, AL', 'Planning', 'Pipeline']] }
+    };
+    let activeManagementView = 'finance';
+    function renderManagement() { const view = managementViews[activeManagementView]; document.getElementById('managementTitle').textContent = view.title; document.getElementById('managementSubtitle').textContent = view.subtitle; document.getElementById('managementContent').innerHTML = `<div class="management-kpis">${view.kpis.map(kpi => `<div class="management-kpi"><strong>${escapeHtml(kpi[0])}</strong><span>${escapeHtml(kpi[1])}</span></div>`).join('')}</div><div class="table-wrap"><table class="management-table"><thead><tr>${view.headers.map(header => `<th>${escapeHtml(header)}</th>`).join('')}</tr></thead><tbody>${view.rows.map(row => `<tr>${row.map((cell, index) => `<td>${index === row.length - 1 ? `<span class="status ${cell === 'Review' || cell === 'Watch' ? 'warn' : cell === 'Pipeline' ? 'neutral' : 'live'}">${escapeHtml(cell)}</span>` : escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+    async function renderAudit() { document.getElementById('managementTitle').textContent = 'Audit history'; document.getElementById('managementSubtitle').textContent = 'Accountability trail for shared operational records.'; const content = document.getElementById('managementContent'); if (!apiMode) { content.innerHTML = '<div class="empty-state">Audit history is available when signed in through the CommandOS server.</div>'; return; } content.innerHTML = '<div class="empty-state">Loading audit history...</div>'; const response = await fetch('/api/audit'); if (!response.ok) { content.innerHTML = '<div class="empty-state">Audit history is restricted to Owner / Admin.</div>'; return; } const entries = await response.json(); content.innerHTML = entries.length ? `<div class="table-wrap"><table class="management-table"><thead><tr><th>Actor</th><th>Action</th><th>Record</th><th>Details</th><th>Time</th></tr></thead><tbody>${entries.map(entry => `<tr><td>${escapeHtml(entry.actor)}<span class="unit-meta">${escapeHtml(entry.role)}</span></td><td>${escapeHtml(entry.action)}</td><td>${escapeHtml(entry.entityType)} · ${escapeHtml(entry.entityId)}</td><td>${escapeHtml(entry.details)}</td><td>${escapeHtml(new Date(entry.createdAt).toLocaleString())}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">No audit activity recorded yet.</div>'; }
+    async function renderUsers() { document.getElementById('managementTitle').textContent = 'User administration'; document.getElementById('managementSubtitle').textContent = 'Manage access, roles, and active status for CommandOS users.'; const content = document.getElementById('managementContent'); if (!apiMode) { content.innerHTML = '<div class="empty-state">User administration is available when signed in through the CommandOS server.</div>'; return; } content.innerHTML = '<div class="empty-state">Loading users...</div>'; const response = await fetch('/api/users'); if (!response.ok) { content.innerHTML = '<div class="empty-state">User administration is restricted to Owner / Admin.</div>'; return; } const users = await response.json(); const roles = ['Owner / Admin', 'Dispatcher', 'Safety', 'Maintenance', 'Accounting', 'Warehouse']; content.innerHTML = `<div class="table-wrap"><table class="management-table"><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody>${users.map(user => `<tr><td>${escapeHtml(user.name)}</td><td>${escapeHtml(user.email)}</td><td><select class="select-field user-role" data-user-id="${escapeHtml(user.id)}">${roles.map(role => `<option ${role === user.role ? 'selected' : ''}>${escapeHtml(role)}</option>`).join('')}</select></td><td><span class="status ${user.active ? 'live' : 'neutral'}">${user.active ? 'Active' : 'Inactive'}</span></td><td><button class="load-action user-save" data-user-id="${escapeHtml(user.id)}" data-active="${user.active}">SAVE</button></td></tr>`).join('')}</tbody></table></div>`; document.querySelectorAll('.user-save').forEach(button => button.addEventListener('click', () => updateUser(button.dataset.userId, button.dataset.active === '1'))); }
+    async function updateUser(userId, active) { const role = document.querySelector(`.user-role[data-user-id="${CSS.escape(userId)}"]`).value; const response = await fetch(`/api/users/${encodeURIComponent(userId)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role, active: Boolean(active) }) }); if (!response.ok) { showToast('User update failed'); return; } showToast('User permissions updated'); renderUsers(); }
+    function openManagement(view) { activeManagementView = view; document.querySelectorAll('.management-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.managementTab === view)); if (view === 'audit') renderAudit(); else if (view === 'users') renderUsers(); else renderManagement(); openOverlay('managementOverlay'); }
+    const procedures = [
+      { name: 'Major truck accident', department: 'Safety response', type: 'extreme', code: 'SAF-X01' },
+      { name: 'Vehicle fire response', department: 'Safety response', type: 'extreme', code: 'SAF-X04' },
+      { name: 'Driver check-in procedure', department: 'Dispatch', type: 'standard', code: 'DSP-014' },
+      { name: 'Detention documentation', department: 'Operations', type: 'standard', code: 'OPS-011' },
+      { name: 'Cargo theft response', department: 'Security', type: 'extreme', code: 'SEC-X02' },
+      { name: 'Pre-trip inspection', department: 'Drivers', type: 'standard', code: 'DRV-002' },
+      { name: 'Breakdown dispatch procedure', department: 'Dispatch', type: 'standard', code: 'DSP-012' },
+      { name: 'Out-of-service order', department: 'Compliance', type: 'extreme', code: 'CMP-X04' }
+    ];
+    const sopOverlay = document.getElementById('sopOverlay');
+    const incidentOverlay = document.getElementById('incidentOverlay');
+    let activeFilter = 'all';
+    function renderSops() {
+      const query = document.getElementById('sopSearch').value.toLowerCase().trim();
+      const matches = procedures.filter(procedure => (activeFilter === 'all' || procedure.type === activeFilter) && `${procedure.name} ${procedure.department} ${procedure.code}`.toLowerCase().includes(query));
+      document.getElementById('sopLibrary').innerHTML = matches.length ? matches.map(procedure => `<div class="library-row"><span class="sop-icon">${procedure.type === 'extreme' ? '!' : '↻'}</span><div class="sop-name">${procedure.name}<small>${procedure.department} · ${procedure.code}</small></div><span class="type-tag ${procedure.type}">${procedure.type}</span><button class="text-btn procedure-open" data-procedure="${procedure.name}">OPEN →</button></div>`).join('') : '<div class="empty-state">No procedures match this search.</div>';
+      document.querySelectorAll('.procedure-open').forEach(button => button.addEventListener('click', () => { closeOverlay('sopOverlay'); showToast(`${button.dataset.procedure} opened`); }));
+    }
+    function openOverlay(id) { document.getElementById(id).classList.add('open'); }
+    function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+    function openSopCenter() { renderSops(); openOverlay('sopOverlay'); document.getElementById('sopSearch').focus(); }
+    document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => { document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active')); item.classList.add('active'); if (item.textContent.includes('SOP Center')) { openSopCenter(); } else if (item.textContent.includes('Loads')) { openLoadBoard(); } else if (item.textContent.includes('Fleet')) { openFleet(); } else if (item.textContent.includes('Finance')) { openManagement('finance'); } else if (item.textContent.includes('People')) { openManagement('people'); } else if (item.textContent.includes('Warehousing')) { openManagement('warehousing'); } else { showToast(item.textContent.trim() + ' workspace selected'); } }));
+    document.getElementById('reportBtn').addEventListener('click', () => openOverlay('incidentOverlay'));
+    document.getElementById('allExceptions').addEventListener('click', () => showToast('Showing all open exceptions'));
+    document.getElementById('loadsBtn').addEventListener('click', openLoadBoard);
+    document.getElementById('sopBtn').addEventListener('click', openSopCenter);
+    document.querySelectorAll('.sop-open').forEach(button => button.addEventListener('click', () => showToast('SOP opened for the operations team')));
+    document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => closeOverlay(button.dataset.close)));
+    document.querySelectorAll('.overlay').forEach(overlay => overlay.addEventListener('click', event => { if (event.target === overlay) closeOverlay(overlay.id); }));
+    document.querySelectorAll('#sopOverlay .filter-btn').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('#sopOverlay .filter-btn').forEach(filter => filter.classList.remove('active')); button.classList.add('active'); activeFilter = button.dataset.filter; renderSops(); }));
+    document.getElementById('sopSearch').addEventListener('input', renderSops);
+    document.querySelectorAll('#loadOverlay .filter-btn').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('#loadOverlay .filter-btn').forEach(filter => filter.classList.remove('active')); button.classList.add('active'); renderLoads(); }));
+    document.getElementById('loadSearch').addEventListener('input', renderLoads);
+    document.querySelectorAll('#fleetOverlay .filter-btn').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('#fleetOverlay .filter-btn').forEach(filter => filter.classList.remove('active')); button.classList.add('active'); renderFleet(); }));
+    document.getElementById('fleetSearch').addEventListener('input', renderFleet);
+    document.querySelectorAll('.management-tab').forEach(tab => tab.addEventListener('click', () => { activeManagementView = tab.dataset.managementTab; document.querySelectorAll('.management-tab').forEach(item => item.classList.toggle('active', item === tab)); if (activeManagementView === 'audit') renderAudit(); else if (activeManagementView === 'users') renderUsers(); else renderManagement(); }));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { closeOverlay('sopOverlay'); closeOverlay('incidentOverlay'); closeOverlay('loadOverlay'); closeOverlay('fleetOverlay'); closeOverlay('managementOverlay'); } });
+    document.getElementById('incidentForm').addEventListener('submit', async event => { event.preventDefault(); const incident = { type: document.getElementById('incidentType').value, severity: document.getElementById('incidentSeverity').value, unit: document.getElementById('incidentUnit').value, location: document.getElementById('incidentLocation').value, description: document.getElementById('incidentDescription').value, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }; if (apiMode) { const response = await fetch('/api/incidents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(incident) }); if (!response.ok) { showToast('Incident could not be saved. Try again.'); return; } apiIncidents.push(await response.json()); } else { const incidents = getSavedIncidents(); incidents.push(incident); localStorage.setItem(incidentStorageKey, JSON.stringify(incidents)); } renderExceptions(); closeOverlay('incidentOverlay'); event.target.reset(); showToast(`${incident.type} report created for ${incident.unit}`); });
+    document.getElementById('signOut').addEventListener('click', async () => { if (apiMode) await fetch('/api/auth/logout', { method: 'POST' }); window.location.reload(); });
+    async function initializeRemoteData() { try { const health = await fetch('/api/health'); if (!health.ok) return; const session = await fetch('/api/auth/me'); if (session.status === 401) { document.getElementById('authScreen').classList.remove('hidden'); return; } if (!session.ok) return; const [loadsResponse, incidentsResponse] = await Promise.all([fetch('/api/loads'), fetch('/api/incidents')]); if (!loadsResponse.ok || !incidentsResponse.ok) return; apiLoads = await loadsResponse.json(); apiIncidents = await incidentsResponse.json(); apiMode = true; renderExceptions(); showToast('Connected to shared CommandOS data'); } catch (error) { apiMode = false; } }
+    document.getElementById('authForm').addEventListener('submit', async event => { event.preventDefault(); const errorMessage = document.getElementById('authError'); errorMessage.classList.remove('visible'); const response = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: document.getElementById('authEmail').value, password: document.getElementById('authPassword').value }) }); if (!response.ok) { errorMessage.classList.add('visible'); return; } document.getElementById('authScreen').classList.add('hidden'); await initializeRemoteData(); });
+    initializeRemoteData();
+  </script>
+</body>
+</html>
