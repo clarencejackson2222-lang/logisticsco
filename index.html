@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jackson CommandOS</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c9f269'/%3E%3Cpath d='M9 8v10c0 4 2 6 6 6 4 0 7-2 7-7V8h-4v9c0 2-1 3-3 3s-2-1-2-3V8H9Z' fill='%231f2d29'/%3E%3C/svg%3E" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 
@@ -186,7 +187,7 @@
     .auth-error { color: #a04e42; background: #fce9e5; border-radius: 6px; padding: 9px 10px; font-size: 10px; display: none; }
     .auth-error.visible { display: block; }
     .management-board { width: min(980px, 100%); }
-    .management-tabs { display: flex; gap: 7px; margin-bottom: 17px; border-bottom: 1px solid var(--line); padding-bottom: 11px; }
+    .management-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 17px; border-bottom: 1px solid var(--line); padding-bottom: 11px; }
     .management-tab { border: 1px solid var(--line); background: white; color: var(--muted); border-radius: 6px; padding: 8px 11px; font: 10px 'DM Mono', monospace; }
     .management-tab.active { background: var(--ink); color: white; border-color: var(--ink); }
     .management-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-bottom: 17px; }
@@ -198,6 +199,38 @@
     .management-table th { background: transparent; }
     .management-table td { border-top: 1px solid #edf1ee; font-size: 10px; }
     .management-table td:first-child, .management-table th:first-child { padding-left: 4px; }
+    .finance-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-bottom: 15px; }
+    .finance-columns { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); gap: 14px; align-items: start; }
+    .finance-section { border-top: 1px solid var(--line); padding-top: 15px; margin-top: 17px; }
+    .finance-section h3 { margin: 0; font-size: 12px; }
+    .finance-section > p, .finance-note { color: var(--muted); font-size: 10px; line-height: 1.5; margin: 5px 0 12px; }
+    .finance-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .finance-form.full { grid-column: 1 / -1; }
+    .finance-form .form-field { min-width: 0; }
+    .finance-form .field, .finance-form .select-field { width: 100%; min-width: 0; }
+    .finance-form .form-field.full { grid-column: 1 / -1; }
+    .finance-form-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+    .finance-table th, .finance-table td { padding: 10px 7px; font-size: 10px; }
+    .finance-table th { background: #fbfcfa; }
+    .finance-table td { border-top: 1px solid #edf1ee; }
+    .finance-status { color: #6f7d78; font: 9px 'DM Mono', monospace; }
+    .finance-status.paid { color: #53831d; }
+    .finance-status.scheduled { color: #a36b1a; }
+    .finance-paid { border: 1px solid var(--line); border-radius: 5px; background: white; color: #668c3b; padding: 5px 7px; font: 9px 'DM Mono', monospace; }
+    .finance-budget { display: grid; grid-template-columns: minmax(80px, 1fr) auto auto; gap: 10px; align-items: center; border-top: 1px solid #edf1ee; padding: 10px 0; font-size: 10px; }
+    .finance-budget small { display: block; color: var(--muted); margin-top: 3px; }
+    .finance-budget-bar { grid-column: 1 / -1; height: 4px; background: #e7eee9; border-radius: 3px; overflow: hidden; }
+    .finance-budget-bar i { display: block; height: 100%; background: var(--lime-deep); }
+    .finance-warning { color: #9c473c; background: #fff0ec; border: 1px solid #f5d3cc; border-radius: 6px; padding: 10px 12px; font-size: 10px; margin-bottom: 12px; }
+    .finance-allocations { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
+    .finance-allocation { padding: 9px; background: #fbfcfa; border: 1px solid var(--line); border-radius: 6px; }
+    .finance-allocation strong { display: block; font-size: 11px; }
+    .finance-allocation small { color: var(--muted); font-size: 9px; }
+    .document-studio { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+    .document-link { color: #5e813d; text-decoration: none; font: 9px 'DM Mono', monospace; }
+    .document-link:hover { text-decoration: underline; }
+    @media (max-width: 720px) { .finance-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .finance-columns { grid-template-columns: 1fr; } .finance-allocations { grid-template-columns: repeat(2, minmax(0, 1fr)); } .finance-form { grid-template-columns: 1fr; } .finance-form.full, .finance-form .form-field.full, .finance-form-actions { grid-column: auto; } .finance-budget { grid-template-columns: 1fr auto; } .finance-budget-bar { grid-column: 1 / -1; } }
+    @media (max-width: 720px) { .document-studio { grid-template-columns: 1fr; } }
     @media (max-width: 1050px) { .app { grid-template-columns: 200px minmax(0, 1fr); } .content, .topbar { padding-left: 25px; padding-right: 25px; } .grid, .lower { grid-template-columns: 1fr; } }
     @media (max-width: 720px) { .app { display: block; } .sidebar { padding: 15px 16px; } .brand { padding-bottom: 14px; } .nav-label, .sidebar-footer { display: none; } nav { display: flex; overflow-x: auto; gap: 5px; } .nav-item { white-space: nowrap; padding: 9px 11px; } .topbar { height: 58px; padding: 0 17px; } .date-pill { display: none; } .content { padding: 25px 17px 38px; } .page-heading { align-items: flex-start; flex-direction: column; gap: 17px; } .metrics { grid-template-columns: repeat(2, 1fr); gap: 9px; } .metric { padding: 14px; } .metric strong { font-size: 23px; } .metric-foot { font-size: 9px; } .panel-header, th, td { padding-left: 14px; padding-right: 14px; } .fleet-summary { grid-template-columns: repeat(2, 1fr); } }
   </style>
@@ -227,7 +260,7 @@
       <div class="sidebar-footer"><div class="profile"><div class="avatar">CJ</div><div><strong>Clarence Jackson</strong><small>Owner / Admin</small></div><button class="sign-out" id="signOut">SIGN OUT</button></div></div>
     </aside>
     <main>
-      <header class="topbar"><div class="breadcrumb">JACKSON LOGISTICS / <b>OVERVIEW</b></div><div class="top-actions"><button class="icon-btn" aria-label="Search">⌕</button><button class="icon-btn" aria-label="Notifications"><span class="alert-dot"></span>♧</button><span class="date-pill">MON, SEP 07 2026 &nbsp; 08:42 CT</span></div></header>
+      <header class="topbar"><div class="breadcrumb">JACKSON LOGISTICS / <b>OVERVIEW</b></div><div class="top-actions"><button class="icon-btn" id="globalSearchBtn" aria-label="Search">⌕</button><button class="icon-btn" id="notificationsBtn" aria-label="Notifications"><span class="alert-dot"></span>♧</button><span class="date-pill">MON, SEP 07 2026 &nbsp; 08:42 CT</span></div></header>
       <section class="content">
         <div class="page-heading"><div><div class="eyebrow">Operations control center</div><h1>Good morning, Clarence.</h1><p class="heading-note">Here is the pulse of your network. Two items need attention.</p></div><button class="primary" id="reportBtn">＋ &nbsp; New incident report</button></div>
         <section class="metrics">
@@ -260,7 +293,16 @@
     <div class="modal fleet-board"><div class="modal-header"><div><h2 id="fleetTitle">Fleet &amp; drivers</h2><p>Vehicle readiness, driver status, and maintenance exposure.</p></div><button class="close-btn" data-close="fleetOverlay" aria-label="Close fleet workspace">×</button></div><div class="modal-body"><div class="fleet-summary"><div class="fleet-stat"><strong id="fleetTotal">42</strong><span>Total units</span></div><div class="fleet-stat"><strong id="fleetMoving">38</strong><span>Moving</span></div><div class="fleet-stat"><strong id="fleetService">04</strong><span>In service</span></div><div class="fleet-stat"><strong id="fleetDue">03</strong><span>Maintenance due</span></div></div><div class="load-tools"><input class="search-field" id="fleetSearch" type="search" placeholder="Search unit, driver, VIN, or status" /><button class="filter-btn active" data-fleet-filter="all">ALL</button><button class="filter-btn" data-fleet-filter="Moving">MOVING</button><button class="filter-btn" data-fleet-filter="In service">IN SERVICE</button><button class="filter-btn" data-fleet-filter="Available">AVAILABLE</button></div><div class="table-wrap"><table class="fleet-table"><thead><tr><th>Unit</th><th>Driver</th><th>Vehicle</th><th>Location</th><th>Maintenance</th><th>Status</th></tr></thead><tbody id="fleetRows"></tbody></table></div></div></div>
   </div>
   <div class="overlay" id="managementOverlay" role="dialog" aria-modal="true" aria-labelledby="managementTitle">
-    <div class="modal management-board"><div class="modal-header"><div><h2 id="managementTitle">Management workspace</h2><p id="managementSubtitle">Company-wide operating records.</p></div><button class="close-btn" data-close="managementOverlay" aria-label="Close management workspace">×</button></div><div class="modal-body"><div class="management-tabs"><button class="management-tab active" data-management-tab="finance">FINANCE</button><button class="management-tab" data-management-tab="people">PEOPLE</button><button class="management-tab" data-management-tab="warehousing">WAREHOUSING</button><button class="management-tab" data-management-tab="audit">AUDIT</button><button class="management-tab" data-management-tab="users">USERS</button></div><div id="managementContent"></div></div></div>
+    <div class="modal management-board"><div class="modal-header"><div><h2 id="managementTitle">Management workspace</h2><p id="managementSubtitle">Company-wide operating records.</p></div><button class="close-btn" data-close="managementOverlay" aria-label="Close management workspace">×</button></div><div class="modal-body"><div class="management-tabs"><button class="management-tab active" data-management-tab="finance">FINANCE</button><button class="management-tab" data-management-tab="billing">BILLING</button><button class="management-tab" data-management-tab="fleetProfiles">FLEET PROFILES</button><button class="management-tab" data-management-tab="trips">TRIP PLANNER</button><button class="management-tab" data-management-tab="dvir">DVIR</button><button class="management-tab" data-management-tab="advisor">ADVISOR</button><button class="management-tab" data-management-tab="readiness">READINESS</button><button class="management-tab" data-management-tab="performance">PERFORMANCE</button><button class="management-tab" data-management-tab="people">PEOPLE</button><button class="management-tab" data-management-tab="warehousing">WAREHOUSING</button><button class="management-tab" data-management-tab="documents">DOCUMENTS</button><button class="management-tab" data-management-tab="audit">AUDIT</button><button class="management-tab" data-management-tab="users">USERS</button></div><div id="managementContent"></div></div></div>
+  </div>
+  <div class="overlay" id="sopDetailOverlay" role="dialog" aria-modal="true" aria-labelledby="sopDetailTitle">
+    <div class="modal"><div class="modal-header"><div><h2 id="sopDetailTitle">Procedure</h2><p id="sopDetailSubtitle">Controlled operating procedure</p></div><button class="close-btn" data-close="sopDetailOverlay" aria-label="Close procedure">×</button></div><div class="modal-body"><div class="eyebrow">Procedure summary</div><p id="sopDetailBody" class="heading-note"></p><div class="management-kpis"><div class="management-kpi"><strong id="sopDetailType">Standard</strong><span>Classification</span></div><div class="management-kpi"><strong id="sopDetailVersion">v1</strong><span>Current version</span></div><div class="management-kpi"><strong id="sopDetailOwner">Operations</strong><span>Owner</span></div></div><div class="panel"><div class="panel-header"><div><div class="panel-title">Immediate checklist</div><div class="panel-subtitle">Follow the controlled sequence and escalate when required.</div></div></div><div class="sop-list"><div class="sop-item"><span class="sop-icon">1</span><div class="sop-name">Confirm immediate safety conditions<small>Protect people first and contact emergency services when needed.</small></div></div><div class="sop-item"><span class="sop-icon">2</span><div class="sop-name">Notify the responsible lead<small>Record the time, location, and current operating status.</small></div></div><div class="sop-item"><span class="sop-icon">3</span><div class="sop-name">Preserve required documentation<small>Attach evidence and complete the incident or operations record.</small></div></div></div></div></div><div class="modal-footer"><button class="secondary" data-close="sopDetailOverlay">Close</button><button class="primary" id="detailAcknowledge">Acknowledge procedure</button></div></div>
+  </div>
+  <div class="overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal"><div class="modal-header"><div><h2 id="settingsTitle">CommandOS settings</h2><p>Workspace preferences and operating defaults.</p></div><button class="close-btn" data-close="settingsOverlay" aria-label="Close settings">×</button></div><div class="modal-body"><div class="form-grid"><div class="form-field"><label for="timezoneSetting">Operating timezone</label><select class="select-field" id="timezoneSetting"><option>Central Time · CT</option><option>Eastern Time · ET</option><option>Mountain Time · MT</option><option>Pacific Time · PT</option></select></div><div class="form-field"><label for="refreshSetting">Data refresh</label><select class="select-field" id="refreshSetting"><option>Live when server connected</option><option>Every 5 minutes</option><option>Manual refresh</option></select></div><div class="form-field full"><label for="notificationSetting">Notification preference</label><select class="select-field" id="notificationSetting"><option>Critical exceptions only</option><option>All operations updates</option><option>Muted</option></select></div></div></div><div class="modal-footer"><button class="secondary" data-close="settingsOverlay">Cancel</button><button class="primary" id="saveSettings">Save settings</button></div></div>
+  </div>
+  <div class="overlay" id="quickOverlay" role="dialog" aria-modal="true" aria-labelledby="quickTitle">
+    <div class="modal"><div class="modal-header"><div><h2 id="quickTitle">CommandOS search</h2><p id="quickSubtitle">Find records across your operating network.</p></div><button class="close-btn" data-close="quickOverlay" aria-label="Close quick view">×</button></div><div class="modal-body"><input class="search-field" id="globalSearch" type="search" placeholder="Search loads, units, drivers, SOPs, or exceptions" /><div id="quickResults"></div></div></div>
   </div>
   <div class="toast" id="toast">Incident report started. Add details in the new report.</div>
   <script>
@@ -268,8 +310,15 @@
     let toastTimer;
     function showToast(message) { toast.textContent = message; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2800); }
     let apiMode = false;
+    let currentUserRole = '';
     let apiIncidents = null;
     let apiLoads = null;
+    let apiFleet = null;
+    let apiSops = null;
+    let apiFinance = null;
+    let apiWarehouses = null;
+    let apiDocuments = null;
+    let apiNotifications = null;
     const incidentStorageKey = 'jackson-commandos-incidents';
     const seedExceptions = [
       { title: 'Unit 218 · Driver check-in overdue', detail: 'Last location 34 mi outside Little Rock. Check-in window exceeded by 42 minutes.', severity: 'high', time: '08:31' },
@@ -315,7 +364,7 @@
       { unit: '203', vin: '...5B90', driver: 'Renee Hayes', qualification: 'CDL-A · Current', vehicle: '2020 International LT', location: 'Jackson, TN', maintenance: 'Inspection due', maintenanceDue: true, status: 'In service' },
       { unit: '215', vin: '...1D38', driver: 'Darius Wright', qualification: 'Medical card renewal', vehicle: '2022 Freightliner Cascadia', location: 'Dallas, TX', maintenance: 'Due in 420 mi', maintenanceDue: true, status: 'In service' }
     ];
-    function getFleet() { try { return JSON.parse(localStorage.getItem(fleetStorageKey)) || defaultFleet; } catch (error) { return defaultFleet; } }
+    function getFleet() { if (apiFleet) return apiFleet; try { return JSON.parse(localStorage.getItem(fleetStorageKey)) || defaultFleet; } catch (error) { return defaultFleet; } }
     function renderFleet() {
       const query = document.getElementById('fleetSearch').value.toLowerCase().trim();
       const filter = document.querySelector('[data-fleet-filter].active').dataset.fleetFilter;
@@ -334,11 +383,528 @@
       warehousing: { title: 'Warehouse network', subtitle: 'Facilities, capacity, and freight handling across the logistics group.', kpis: [['3', 'Active facilities'], ['78%', 'Network utilization'], ['12', 'Inbound appointments']], headers: ['Facility', 'Location', 'Capacity', 'Status'], rows: [['Jackson Central', 'Memphis, TN', '82% occupied', 'Operating'], ['Delta Crossdock', 'Little Rock, AR', '64% occupied', 'Operating'], ['South Terminal', 'Atlanta, GA', '88% occupied', 'Watch'], ['New site review', 'Birmingham, AL', 'Planning', 'Pipeline']] }
     };
     let activeManagementView = 'finance';
-    function renderManagement() { const view = managementViews[activeManagementView]; document.getElementById('managementTitle').textContent = view.title; document.getElementById('managementSubtitle').textContent = view.subtitle; document.getElementById('managementContent').innerHTML = `<div class="management-kpis">${view.kpis.map(kpi => `<div class="management-kpi"><strong>${escapeHtml(kpi[0])}</strong><span>${escapeHtml(kpi[1])}</span></div>`).join('')}</div><div class="table-wrap"><table class="management-table"><thead><tr>${view.headers.map(header => `<th>${escapeHtml(header)}</th>`).join('')}</tr></thead><tbody>${view.rows.map(row => `<tr>${row.map((cell, index) => `<td>${index === row.length - 1 ? `<span class="status ${cell === 'Review' || cell === 'Watch' ? 'warn' : cell === 'Pipeline' ? 'neutral' : 'live'}">${escapeHtml(cell)}</span>` : escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+    function formatMoney(cents) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format((Number(cents) || 0) / 100); }
+    function formatShortDate(value) { const [year, month, day] = value.split('-'); return `${month}/${day}/${year}`; }
+    async function financeRequest(path, options = {}) { const response = await fetch(path, options); const body = await response.json(); if (!response.ok) throw new Error(body.error || 'Finance request failed'); return body; }
+    async function renderFinance() {
+      const content = document.getElementById('managementContent');
+      document.getElementById('managementTitle').textContent = 'Owner-operator finance';
+      document.getElementById('managementSubtitle').textContent = 'Cash planning, categorized spending, and load-level records.';
+      if (!apiMode) { content.innerHTML = '<div class="empty-state">Finance records require the CommandOS server and an authorized account.</div>'; return; }
+      content.innerHTML = '<div class="empty-state">Loading finance records...</div>';
+      let entries; let summary; let forecast; let budgets;
+      try {
+        [entries, summary, forecast, budgets] = await Promise.all([
+          financeRequest('/api/finance/entries'), financeRequest('/api/finance/summary'),
+          financeRequest('/api/finance/forecast'), financeRequest('/api/finance/budgets')
+        ]);
+      } catch (error) {
+        content.innerHTML = `<div class="empty-state">${escapeHtml(error.message.includes('cannot access') ? 'Finance access is limited to Owner / Admin and Accounting.' : error.message)}</div>`;
+        return;
+      }
+      const settings = summary.settings;
+      const firstShortfall = forecast.weeks.find(week => week.belowCashFloor);
+      const categories = ['Freight', 'Fuel', 'Driver pay', 'Tolls', 'Maintenance', 'Insurance', 'Taxes', 'Scaling', 'Other'];
+      const entryRows = entries.length ? entries.map(entry => `<tr><td>${escapeHtml(entry.description)}<small class="unit-meta">${escapeHtml(entry.category)}${entry.loadRef ? ` · ${escapeHtml(entry.loadRef)}` : ''}${entry.taxDeductible ? ' · tax deductible' : ''}</small></td><td>${escapeHtml(entry.counterparty || '—')}</td><td>${formatShortDate(entry.paymentDate)}</td><td>${escapeHtml(entry.direction)}</td><td>${formatMoney(entry.amountCents)}</td><td><span class="finance-status ${escapeHtml(entry.status)}">${escapeHtml(entry.status)}</span></td><td>${entry.status === 'scheduled' ? `<button class="finance-paid" data-finance-paid="${escapeHtml(entry.id)}">MARK PAID</button>` : '—'}</td></tr>`).join('') : '<tr><td colspan="7"><div class="empty-state">No income or expenses recorded yet.</div></td></tr>';
+      const forecastRows = forecast.weeks.map(week => `<tr><td>Week ${week.week}<small class="unit-meta">${formatShortDate(week.startDate)} – ${formatShortDate(week.endDate)}</small></td><td>${formatMoney(week.incomeCents)}</td><td>${formatMoney(week.expenseCents)}</td><td>${formatMoney(week.mileageCostsCents)}</td><td>${formatMoney(week.reserveCents)}</td><td>${formatMoney(week.closingCashCents)}</td><td><span class="status ${week.belowCashFloor ? 'warn' : 'live'}">${week.belowCashFloor ? 'Below floor' : 'On plan'}</span></td></tr>`).join('');
+      const budgetRows = budgets.length ? budgets.map(budget => { const percent = budget.budgetCents > 0 ? Math.min(100, Math.max(0, budget.spentCents / budget.budgetCents * 100)) : budget.spentCents > 0 ? 100 : 0; return `<div class="finance-budget"><div><strong>${escapeHtml(budget.category)}</strong><small>${formatMoney(budget.spentCents)} spent · ${formatMoney(budget.remainingCents)} remaining</small></div><span>${formatMoney(budget.budgetCents)}</span><span class="status ${budget.remainingCents < 0 ? 'warn' : 'neutral'}">${budget.remainingCents < 0 ? 'Over' : 'Budget'}</span><div class="finance-budget-bar"><i style="width:${percent}%"></i></div></div>`; }).join('') : '<div class="empty-state">No category budgets set.</div>';
+      const allocationTiles = summary.allocations.map(allocation => `<div class="finance-allocation"><strong>${formatMoney(allocation.amountCents)}</strong><small>${escapeHtml(allocation.category)} · ${allocation.percent}%</small></div>`).join('');
+      const loadProfitRows = summary.loadProfits.length ? summary.loadProfits.map(load => `<tr><td>${escapeHtml(load.loadRef)}</td><td>${load.miles ? Number(load.miles).toLocaleString() : '—'}</td><td>${formatMoney(load.fuelCents)}</td><td>${formatMoney(load.driverPayCents)}</td><td>${formatMoney(load.linkedExpensesCents)}</td><td>${formatMoney(load.profitCents)}</td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">Add a load income record with miles to see estimated load profit.</div></td></tr>';
+      content.innerHTML = `
+        <div class="finance-kpis">
+          <div class="management-kpi"><strong>${formatMoney(settings.currentCashCents)}</strong><span>Current cash entered</span></div>
+          <div class="management-kpi"><strong>${formatMoney(summary.paidIncomeCents)}</strong><span>Collected income</span></div>
+          <div class="management-kpi"><strong>${formatMoney(summary.scheduledIncomeCents)}</strong><span>Scheduled income</span></div>
+          <div class="management-kpi"><strong>${formatMoney(summary.netCents)}</strong><span>Estimated net · all records</span></div>
+          <div class="management-kpi"><strong>${summary.costPerMileCents === null ? '—' : `${formatMoney(summary.costPerMileCents)}/mi`}</strong><span>Estimated cost per mile</span></div>
+          <div class="management-kpi"><strong>${formatMoney(summary.deductibleExpenseCents)}</strong><span>Paid deductible expenses</span></div>
+        </div>
+        ${firstShortfall ? `<div class="finance-warning">Projected cash first falls below your weekly floor in week ${firstShortfall.week} (${formatMoney(firstShortfall.closingCashCents)} projected vs ${formatMoney(forecast.weeklyCashFloorCents)} target). Review collections, bills, or assumptions.</div>` : ''}
+        <div class="finance-columns">
+          <div>
+            <section class="finance-section" style="border-top:0;padding-top:0;margin-top:0"><h3>Add income or expense</h3><p>Enter paid transactions or scheduled receipts and bills. Amounts are stored to the cent.</p>
+              <form class="finance-form" id="financeEntryForm">
+                <div class="form-field"><label for="financeDirection">Type</label><select class="select-field" id="financeDirection" name="direction"><option value="income">Income / receivable</option><option value="expense">Expense / payable</option></select></div>
+                <div class="form-field"><label for="financeCategory">Category</label><input class="field" id="financeCategory" name="category" list="financeCategories" required maxlength="50" /><datalist id="financeCategories">${categories.map(category => `<option value="${category}">`).join('')}</datalist></div>
+                <div class="form-field full"><label for="financeDescription">Description</label><input class="field" id="financeDescription" name="description" required maxlength="200" /></div>
+                <div class="form-field"><label for="financeCounterparty">Customer / vendor</label><input class="field" id="financeCounterparty" name="counterparty" maxlength="100" /></div>
+                <div class="form-field"><label for="financeAmount">Amount (USD)</label><input class="field" id="financeAmount" name="amount" type="number" min="0.01" step="0.01" required /></div>
+                <div class="form-field"><label for="financePaymentDate">Payment / due date</label><input class="field" id="financePaymentDate" name="paymentDate" type="date" value="${new Date().toISOString().slice(0, 10)}" required /></div>
+                <div class="form-field"><label for="financeStatus">Payment state</label><select class="select-field" id="financeStatus" name="status"><option value="paid">Paid / received</option><option value="scheduled">Scheduled / unpaid</option></select></div>
+                <div class="form-field"><label for="financeLoadRef">Load reference</label><input class="field" id="financeLoadRef" name="loadRef" maxlength="80" placeholder="Optional load ID" /></div>
+                <div class="form-field"><label for="financeMiles">Load miles</label><input class="field" id="financeMiles" name="miles" type="number" min="0.1" step="0.1" placeholder="Income records only" /></div>
+                <div id="financeMileageCosts" class="finance-form full"><div class="form-field"><label for="financeFuelPerMile">Fuel cost per mile (USD)</label><input class="field" id="financeFuelPerMile" name="fuelCostPerMile" type="number" min="0" step="0.01" value="0" /></div><div class="form-field"><label for="financeDriverPayPerMile">Driver pay per mile (USD)</label><input class="field" id="financeDriverPayPerMile" name="driverPayPerMile" type="number" min="0" step="0.01" value="0" /></div></div>
+                <div id="financeDeductibleField" class="form-field full"><label><input id="financeTaxDeductible" name="taxDeductible" type="checkbox" /> Mark this paid expense as tax deductible</label></div>
+                <p class="finance-note form-field full">For load profit estimates, enter fuel and driver rates here. Add separate road expenses only for additional costs so the same fuel or pay is not counted twice.</p>
+                <div class="finance-form-actions"><button class="primary" type="submit">Add finance record</button></div>
+              </form>
+            </section>
+            <section class="finance-section"><h3>Income and expense ledger</h3><p>Scheduled items affect future cash projections; mark them paid when money clears.</p><div class="table-wrap"><table class="finance-table"><thead><tr><th>Record</th><th>Counterparty</th><th>Date</th><th>Type</th><th>Amount</th><th>State</th><th>Action</th></tr></thead><tbody>${entryRows}</tbody></table></div></section>
+          </div>
+          <div>
+            <section class="finance-section" style="border-top:0;padding-top:0;margin-top:0"><h3>Cash and allocation rules</h3><p>Current cash is a manual snapshot. Refresh it as real payments clear, then set the operating-cash floor for the week.</p>
+              <form class="finance-form" id="financeSettingsForm">
+                <div class="form-field"><label for="financeCurrentCash">Current cash (USD)</label><input class="field" id="financeCurrentCash" name="currentCash" type="number" min="0" step="0.01" value="${(settings.currentCashCents / 100).toFixed(2)}" required /></div>
+                <div class="form-field"><label for="financeCashFloor">Weekly cash floor (USD)</label><input class="field" id="financeCashFloor" name="cashFloor" type="number" min="0" step="0.01" value="${(settings.weeklyCashFloorCents / 100).toFixed(2)}" required /></div>
+                ${[['taxPercent', 'Tax'], ['insurancePercent', 'Insurance'], ['maintenancePercent', 'Maintenance'], ['scalingPercent', 'Scaling'], ['profitPercent', 'Profit']].map(([field, label]) => `<div class="form-field"><label for="finance-${field}">${label} reserve (%)</label><input class="field" id="finance-${field}" name="${field}" type="number" min="0" max="100" step="0.1" value="${settings[field]}" required /></div>`).join('')}
+                <div class="finance-form-actions"><button class="primary" type="submit">Save cash plan</button></div>
+              </form>
+              <p class="finance-note">Reserve suggestions use positive estimated margin after recorded expenses. Allocation is planning only; no bank transfers happen here. Tax amounts are estimates, not tax advice.</p>
+              <div class="finance-allocations">${allocationTiles}</div>
+            </section>
+            <section class="finance-section"><h3>Monthly category budgets</h3><p>Actual paid expenses count against the current month’s category cap.</p>
+              <form class="finance-form" id="financeBudgetForm"><div class="form-field"><label for="financeBudgetCategory">Category</label><input class="field" id="financeBudgetCategory" name="category" list="financeCategories" required maxlength="50" /></div><div class="form-field"><label for="financeBudgetAmount">Monthly cap (USD)</label><input class="field" id="financeBudgetAmount" name="amount" type="number" min="0" step="0.01" required /></div><div class="finance-form-actions"><button class="secondary" type="submit">Set category budget</button></div></form>
+              ${budgetRows}
+            </section>
+          </div>
+        </div>
+        <section class="finance-section"><h3>Per-load profit estimate</h3><p>Load revenue less fuel and driver pay per mile plus separately recorded expenses linked by load reference.</p><div class="table-wrap"><table class="finance-table"><thead><tr><th>Load</th><th>Miles</th><th>Fuel estimate</th><th>Driver pay</th><th>Other linked costs</th><th>Estimated profit</th></tr></thead><tbody>${loadProfitRows}</tbody></table></div></section>
+        <section class="finance-section"><h3>13-week rolling cash forecast</h3><p>Uses current cash, scheduled income and expenses, per-mile load costs, then estimates tax, insurance, maintenance, and scaling reserves on positive weekly margin. Dates and payments remain estimates until confirmed.</p><div class="table-wrap"><table class="finance-table"><thead><tr><th>Week</th><th>Expected income</th><th>Planned expenses</th><th>Per-mile costs</th><th>Reserve estimate</th><th>Cash after reserves</th><th>Floor check</th></tr></thead><tbody>${forecastRows}</tbody></table></div></section>`;
+      document.getElementById('financeEntryForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const amountCents = Math.round(Number(form.get('amount')) * 100);
+        const milesValue = form.get('miles');
+        const direction = form.get('direction');
+        const fuelRateCents = Math.round(Number(form.get('fuelCostPerMile') || 0) * 100);
+        const driverPayRateCents = Math.round(Number(form.get('driverPayPerMile') || 0) * 100);
+        if (direction === 'income' && (fuelRateCents > 0 || driverPayRateCents > 0) && !milesValue) { showToast('Enter load miles to calculate per-mile costs'); return; }
+        const entry = { direction, category: form.get('category'), description: form.get('description'), counterparty: form.get('counterparty'), amountCents, paymentDate: form.get('paymentDate'), status: form.get('status'), loadRef: form.get('loadRef'), miles: milesValue ? Number(milesValue) : null, fuelCostPerMileCents: direction === 'income' ? fuelRateCents : 0, driverPayPerMileCents: direction === 'income' ? driverPayRateCents : 0, taxDeductible: direction === 'expense' && document.getElementById('financeTaxDeductible').checked };
+        try { await financeRequest('/api/finance/entries', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry) }); showToast('Finance record added'); renderFinance(); }
+        catch (error) { showToast(error.message); }
+      });
+      document.getElementById('financeDirection').addEventListener('change', event => {
+        const isIncome = event.target.value === 'income';
+        document.getElementById('financeMileageCosts').hidden = !isIncome;
+        document.getElementById('financeDeductibleField').hidden = isIncome;
+      });
+      document.getElementById('financeDirection').dispatchEvent(new Event('change'));
+      document.getElementById('financeSettingsForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const settingsUpdate = { currentCashCents: Math.round(Number(form.get('currentCash')) * 100), weeklyCashFloorCents: Math.round(Number(form.get('cashFloor')) * 100) };
+        for (const field of ['taxPercent', 'insurancePercent', 'maintenancePercent', 'scalingPercent', 'profitPercent']) settingsUpdate[field] = Number(form.get(field));
+        if (Math.abs(settingsUpdate.taxPercent + settingsUpdate.insurancePercent + settingsUpdate.maintenancePercent + settingsUpdate.scalingPercent + settingsUpdate.profitPercent - 100) > 0.01) { showToast('Reserve percentages must total 100%'); return; }
+        try { await financeRequest('/api/finance/settings', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(settingsUpdate) }); showToast('Cash plan saved'); renderFinance(); }
+        catch (error) { showToast(error.message); }
+      });
+      document.getElementById('financeBudgetForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        try { await financeRequest(`/api/finance/budgets/${encodeURIComponent(form.get('category'))}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ budgetCents: Math.round(Number(form.get('amount')) * 100) }) }); showToast('Monthly category budget saved'); renderFinance(); }
+        catch (error) { showToast(error.message); }
+      });
+      content.querySelectorAll('[data-finance-paid]').forEach(button => button.addEventListener('click', async () => {
+        try { await financeRequest(`/api/finance/entries/${encodeURIComponent(button.dataset.financePaid)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'paid' }) }); showToast('Payment marked paid'); renderFinance(); }
+        catch (error) { showToast(error.message); }
+      }));
+    }
+    async function renderBilling() {
+      const content = document.getElementById('managementContent');
+      document.getElementById('managementTitle').textContent = 'Receivables and payables';
+      document.getElementById('managementSubtitle').textContent = 'Keep payer and vendor contacts with invoices, bills, and payment review.';
+      if (!apiMode) { content.innerHTML = '<div class="empty-state">Billing records require the CommandOS server and an authorized account.</div>'; return; }
+      content.innerHTML = '<div class="empty-state">Loading billing records...</div>';
+      let counterparties; let invoices; let reconciliation;
+      try {
+        [counterparties, invoices, reconciliation] = await Promise.all([
+          financeRequest('/api/finance/counterparties'), financeRequest('/api/finance/invoices'), financeRequest('/api/finance/reconciliation')
+        ]);
+      } catch (error) {
+        content.innerHTML = `<div class="empty-state">${escapeHtml(error.message.includes('cannot access') ? 'Billing access is limited to Owner / Admin and Accounting.' : error.message)}</div>`;
+        return;
+      }
+      const receivables = invoices.filter(invoice => invoice.kind === 'receivable');
+      const payables = invoices.filter(invoice => invoice.kind === 'payable');
+      const openReceivables = receivables.filter(invoice => invoice.status === 'open');
+      const openPayables = payables.filter(invoice => invoice.status === 'open');
+      const deliveredLoads = (apiLoads || []).filter(load => load.status === 'Delivered');
+      const partyOptions = kind => counterparties.filter(party => party.kind === kind || party.kind === 'both').map(party => `<option value="${escapeHtml(party.id)}">${escapeHtml(party.name)}</option>`).join('');
+      const invoiceRows = invoices.length ? invoices.map(invoice => `<tr><td>${escapeHtml(invoice.invoiceNumber)}<small class="unit-meta">${invoice.loadRef ? `Load ${escapeHtml(invoice.loadRef)}` : invoice.kind === 'receivable' ? 'Customer invoice' : 'Vendor bill'}</small></td><td>${escapeHtml(invoice.counterparty)}<small class="unit-meta">${escapeHtml(invoice.contactName || invoice.email || invoice.phone || 'Contact details on file')}</small></td><td>${escapeHtml(invoice.kind)}</td><td>${formatShortDate(invoice.dueDate)}</td><td>${formatMoney(invoice.amountCents)}</td><td><span class="finance-status ${invoice.status === 'paid' ? 'paid' : invoice.status === 'open' ? 'scheduled' : ''}">${escapeHtml(invoice.status)}</span>${invoice.paymentReference ? `<small class="unit-meta">${escapeHtml(invoice.paymentReference)}</small>` : ''}</td><td>${invoice.status === 'open' ? `<div class="load-actions">${invoice.kind === 'receivable' ? `<input class="field invoice-payment-ref" data-payment-ref="${escapeHtml(invoice.id)}" aria-label="Payment reference for ${escapeHtml(invoice.invoiceNumber)}" placeholder="Receipt / trace" />` : ''}<button class="finance-paid" data-invoice-paid="${escapeHtml(invoice.id)}">MARK PAID</button></div>` : '—'}</td></tr>`).join('') : '<tr><td colspan="7"><div class="empty-state">No invoices or bills recorded.</div></td></tr>';
+      const reconciliationRows = reconciliation.length ? reconciliation.map(item => `<tr><td>${escapeHtml(item.invoiceNumber)}<small class="unit-meta">${escapeHtml(item.kind)} · ${escapeHtml(item.counterparty)}</small></td><td>${formatMoney(item.amountCents)}</td><td><span class="status ${item.matchStatus === 'matched' ? 'live' : 'warn'}">${escapeHtml(item.matchStatus.replaceAll('_', ' '))}</span></td><td>${escapeHtml(item.detail)}</td><td>${item.candidateCount}</td></tr>`).join('') : '<tr><td colspan="5"><div class="empty-state">Add an invoice or bill to begin reconciliation review.</div></td></tr>';
+      const partyRows = counterparties.length ? counterparties.map(party => `<tr><td>${escapeHtml(party.name)}<small class="unit-meta">${escapeHtml(party.kind)}</small></td><td>${escapeHtml(party.contactName || '—')}</td><td>${escapeHtml(party.email || '—')}</td><td>${escapeHtml(party.phone || '—')}</td><td>${party.termsDays} days</td></tr>`).join('') : '<tr><td colspan="5"><div class="empty-state">No customer or vendor profiles yet.</div></td></tr>';
+      content.innerHTML = `
+        <div class="management-kpis">
+          <div class="management-kpi"><strong>${receivables.filter(invoice => invoice.status === 'open').length}</strong><span>Open receivables</span></div>
+          <div class="management-kpi"><strong>${formatMoney(openReceivables.reduce((total, invoice) => total + invoice.amountCents, 0))}</strong><span>Customer balance due</span></div>
+          <div class="management-kpi"><strong>${payables.filter(invoice => invoice.status === 'open').length}</strong><span>Open payables</span></div>
+          <div class="management-kpi"><strong>${reconciliation.filter(item => item.matchStatus !== 'matched').length}</strong><span>Items to review</span></div>
+        </div>
+        <div class="finance-columns">
+          <div>
+            <section class="finance-section" style="border-top:0;padding-top:0;margin-top:0"><h3>Add customer or vendor</h3><p>Keep the contact and payment terms beside invoice history for collection follow-up.</p>
+              <form class="finance-form" id="counterpartyForm">
+                <div class="form-field"><label for="partyName">Business / person</label><input class="field" id="partyName" name="name" maxlength="120" required /></div>
+                <div class="form-field"><label for="partyKind">Relationship</label><select class="select-field" id="partyKind" name="kind"><option value="customer">Customer / broker</option><option value="vendor">Vendor</option><option value="both">Both</option></select></div>
+                <div class="form-field"><label for="partyContact">Contact person</label><input class="field" id="partyContact" name="contactName" maxlength="100" /></div>
+                <div class="form-field"><label for="partyTerms">Payment terms (days)</label><input class="field" id="partyTerms" name="termsDays" type="number" min="0" max="120" value="30" required /></div>
+                <div class="form-field"><label for="partyEmail">Email</label><input class="field" id="partyEmail" name="email" type="email" maxlength="254" /></div>
+                <div class="form-field"><label for="partyPhone">Phone</label><input class="field" id="partyPhone" name="phone" type="tel" maxlength="40" /></div>
+                <div class="form-field full"><label for="partyAddress">Mailing address</label><input class="field" id="partyAddress" name="address" maxlength="300" /></div>
+                <div class="form-field full"><label for="partyNotes">Collection / account notes</label><textarea class="field" id="partyNotes" name="notes" maxlength="1000"></textarea></div>
+                <div class="finance-form-actions"><button class="primary" type="submit">Save contact</button></div>
+              </form>
+            </section>
+            <section class="finance-section"><h3>Create receivable or payable</h3><p>Invoices and bills stay open until a person records the payment state.</p>
+              <form class="finance-form" id="invoiceForm">
+                <div class="form-field"><label for="invoiceKind">Record type</label><select class="select-field" id="invoiceKind" name="kind"><option value="receivable">Accounts receivable</option><option value="payable">Accounts payable</option></select></div>
+                <div class="form-field"><label for="invoiceParty">Customer / vendor</label><select class="select-field" id="invoiceParty" name="counterpartyId" required><option value="">Select contact</option>${partyOptions('customer')}</select></div>
+                <div class="form-field"><label for="invoiceNumber">Invoice / bill number</label><input class="field" id="invoiceNumber" name="invoiceNumber" maxlength="80" required /></div>
+                <div class="form-field"><label for="invoiceLoadRef">Load reference</label><input class="field" id="invoiceLoadRef" name="loadRef" maxlength="80" /></div>
+                <div class="form-field"><label for="invoiceAmount">Amount (USD)</label><input class="field" id="invoiceAmount" name="amount" type="number" min="0.01" step="0.01" required /></div>
+                <div class="form-field"><label for="invoiceIssuedDate">Issue date</label><input class="field" id="invoiceIssuedDate" name="issuedDate" type="date" value="${new Date().toISOString().slice(0, 10)}" required /></div>
+                <div class="form-field"><label for="invoiceDueDate">Due date</label><input class="field" id="invoiceDueDate" name="dueDate" type="date" value="${new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10)}" required /></div>
+                <div class="finance-form-actions"><button class="primary" type="submit">Create open record</button></div>
+              </form>
+            </section>
+            <section class="finance-section"><h3>Invoice and bill register</h3><div class="table-wrap"><table class="finance-table"><thead><tr><th>Number</th><th>Counterparty</th><th>Type</th><th>Due date</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>${invoiceRows}</tbody></table></div></section>
+          </div>
+          <div>
+            <section class="finance-section" style="border-top:0;padding-top:0;margin-top:0"><h3>Delivered loads ready to invoice</h3><p>Generate one receivable using the load rate and the customer’s saved payment terms.</p>
+              ${deliveredLoads.length ? deliveredLoads.map(load => `<div class="finance-budget"><div><strong>${escapeHtml(load.id)} · ${escapeHtml(load.customer)}</strong><small>${escapeHtml(load.origin)} → ${escapeHtml(load.destination)}</small></div><span>${escapeHtml(load.revenue)}</span><button class="finance-paid" data-load-invoice="${escapeHtml(load.id)}">CREATE INVOICE</button></div>`).join('') : '<div class="empty-state">No delivered loads are ready to invoice.</div>'}
+            </section>
+            <section class="finance-section"><h3>Reconciliation review</h3><p>Matches are suggestions based on party, amount, load reference, and status. Review exceptions; this report never changes a record.</p><div class="table-wrap"><table class="finance-table"><thead><tr><th>Invoice</th><th>Amount</th><th>Finding</th><th>Detail</th><th>Candidates</th></tr></thead><tbody>${reconciliationRows}</tbody></table></div></section>
+            <section class="finance-section"><h3>Customer and vendor directory</h3><div class="table-wrap"><table class="finance-table"><thead><tr><th>Business</th><th>Contact</th><th>Email</th><th>Phone</th><th>Terms</th></tr></thead><tbody>${partyRows}</tbody></table></div></section>
+          </div>
+        </div>`;
+      document.getElementById('counterpartyForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const party = Object.fromEntries(form.entries());
+        party.termsDays = Number(party.termsDays);
+        try { await financeRequest('/api/finance/counterparties', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(party) }); showToast('Contact profile saved'); renderBilling(); }
+        catch (error) { showToast(error.message); }
+      });
+      document.getElementById('invoiceKind').addEventListener('change', event => {
+        const allowedKind = event.target.value === 'receivable' ? 'customer' : 'vendor';
+        const select = document.getElementById('invoiceParty');
+        select.innerHTML = `<option value="">Select contact</option>${partyOptions(allowedKind)}`;
+      });
+      document.getElementById('invoiceForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const invoice = { kind: form.get('kind'), invoiceNumber: form.get('invoiceNumber'), counterpartyId: form.get('counterpartyId'), amountCents: Math.round(Number(form.get('amount')) * 100), issuedDate: form.get('issuedDate'), dueDate: form.get('dueDate'), loadRef: form.get('loadRef') };
+        try { await financeRequest('/api/finance/invoices', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(invoice) }); showToast('Invoice or bill created'); renderBilling(); }
+        catch (error) { showToast(error.message); }
+      });
+      content.querySelectorAll('[data-load-invoice]').forEach(button => button.addEventListener('click', async () => {
+        try { await financeRequest(`/api/finance/invoices/from-load/${encodeURIComponent(button.dataset.loadInvoice)}`, { method: 'POST' }); showToast('Load invoice generated'); renderBilling(); }
+        catch (error) { showToast(error.message); }
+      }));
+      content.querySelectorAll('[data-invoice-paid]').forEach(button => button.addEventListener('click', async () => {
+        const paymentReference = content.querySelector(`[data-payment-ref="${CSS.escape(button.dataset.invoicePaid)}"]`)?.value || '';
+        try { await financeRequest(`/api/finance/invoices/${encodeURIComponent(button.dataset.invoicePaid)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'paid', paymentReference }) }); showToast('Invoice payment status recorded'); renderBilling(); }
+        catch (error) { showToast(error.message); }
+      }));
+    }
+    function renderFleetProfiles() {
+      const content = document.getElementById('managementContent');
+      document.getElementById('managementTitle').textContent = 'Vehicle and equipment profiles';
+      document.getElementById('managementSubtitle').textContent = 'Set the assigned vehicle type, model, fuel assumptions, and driver-entered hours.';
+      if (!apiMode) { content.innerHTML = '<div class="empty-state">Fleet profiles require the CommandOS server.</div>'; return; }
+      const fleet = getFleet();
+      const options = fleet.map(vehicle => `<option value="${escapeHtml(vehicle.unit)}">Unit ${escapeHtml(vehicle.unit)} · ${escapeHtml(vehicle.vehicle)}</option>`).join('');
+      content.innerHTML = `<form class="finance-form" id="vehicleProfileForm">
+        <div class="form-field"><label for="profileUnit">Assigned unit</label><select class="select-field" id="profileUnit" name="unit">${options}</select></div>
+        <div class="form-field"><label for="profileDriver">Assigned driver</label><input class="field" id="profileDriver" name="driver" maxlength="100" required /></div>
+        <div class="form-field"><label for="profileEquipment">Equipment type</label><select class="select-field" id="profileEquipment" name="equipmentType">${['Semi tractor', 'Dry van', 'Box truck', 'Reefer', 'Flatbed', 'Tanker', 'Other'].map(type => `<option>${type}</option>`).join('')}</select></div>
+        <div class="form-field"><label for="profileModel">Truck model</label><input class="field" id="profileModel" name="vehicle" maxlength="120" required /></div>
+        <div class="form-field"><label for="profileMpg">Fuel economy (MPG)</label><input class="field" id="profileMpg" name="mpg" type="number" min="1" max="25" step="0.1" required /></div>
+        <div class="form-field"><label for="profileTank">Tank capacity (gal)</label><input class="field" id="profileTank" name="tankGallons" type="number" min="1" max="500" step="0.1" required /></div>
+        <div class="form-field"><label for="profileFuel">Current fuel (gal)</label><input class="field" id="profileFuel" name="fuelGallons" type="number" min="0" step="0.1" required /></div>
+        <div class="form-field"><label for="profileHos">Entered driving hours remaining</label><input class="field" id="profileHos" name="hosRemainingHours" type="number" min="0" max="11" step="0.1" required /></div>
+        <div class="finance-form-actions"><button class="primary" type="submit">Save vehicle profile</button></div>
+      </form>
+      <p class="finance-note">Fuel economy and current fuel are manually entered estimates. Remaining hours are not synced to an ELD and do not verify FMCSA compliance.</p>
+      <div class="table-wrap"><table class="finance-table"><thead><tr><th>Unit</th><th>Driver</th><th>Equipment</th><th>Truck model</th><th>MPG</th><th>Fuel</th><th>Entered HOS</th></tr></thead><tbody>${fleet.map(vehicle => `<tr><td>${escapeHtml(vehicle.unit)}</td><td>${escapeHtml(vehicle.driver)}</td><td>${escapeHtml(vehicle.equipmentType)}</td><td>${escapeHtml(vehicle.vehicle)}</td><td>${Number(vehicle.mpg).toFixed(1)}</td><td>${Number(vehicle.fuelGallons).toFixed(1)} / ${Number(vehicle.tankGallons).toFixed(1)} gal</td><td>${Number(vehicle.hosRemainingHours).toFixed(1)} hr</td></tr>`).join('')}</tbody></table></div>`;
+      const form = document.getElementById('vehicleProfileForm');
+      const loadProfile = () => {
+        const vehicle = fleet.find(item => item.unit === form.elements.unit.value);
+        if (!vehicle) return;
+        form.elements.driver.value = vehicle.driver;
+        form.elements.equipmentType.value = vehicle.equipmentType;
+        form.elements.vehicle.value = vehicle.vehicle;
+        form.elements.mpg.value = vehicle.mpg;
+        form.elements.tankGallons.value = vehicle.tankGallons;
+        form.elements.fuelGallons.value = vehicle.fuelGallons;
+        form.elements.hosRemainingHours.value = vehicle.hosRemainingHours;
+      };
+      form.elements.unit.addEventListener('change', loadProfile);
+      loadProfile();
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const values = new FormData(form);
+        const update = Object.fromEntries(values.entries());
+        for (const field of ['mpg', 'tankGallons', 'fuelGallons', 'hosRemainingHours']) update[field] = Number(update[field]);
+        const unit = update.unit;
+        delete update.unit;
+        try {
+          const updated = await financeRequest(`/api/fleet/${encodeURIComponent(unit)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(update) });
+          apiFleet = apiFleet.map(vehicle => vehicle.unit === updated.unit ? updated : vehicle);
+          showToast('Vehicle profile saved');
+          renderFleetProfiles();
+        } catch (error) { showToast(error.message); }
+      });
+    }
+    async function renderTrips() {
+      const content = document.getElementById('managementContent');
+      document.getElementById('managementTitle').textContent = 'Estimate-only trip planner';
+      document.getElementById('managementSubtitle').textContent = 'Plan fuel windows and an overnight stop from manually entered route and vehicle assumptions.';
+      if (!apiMode) { content.innerHTML = '<div class="empty-state">Trip planning requires the CommandOS server.</div>'; return; }
+      const fleet = getFleet();
+      let plans;
+      try { plans = await financeRequest('/api/fleet/trips'); }
+      catch (error) { content.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`; return; }
+      const options = fleet.map(vehicle => `<option value="${escapeHtml(vehicle.unit)}">Unit ${escapeHtml(vehicle.unit)} · ${escapeHtml(vehicle.vehicle)} · ${vehicle.mpg} MPG</option>`).join('');
+      content.innerHTML = `<form class="finance-form" id="tripPlanForm">
+        <div class="form-field"><label for="tripUnit">Assigned unit / truck</label><select class="select-field" id="tripUnit" name="unit">${options}</select></div>
+        <div class="form-field"><label for="tripLoadRef">Load reference</label><input class="field" id="tripLoadRef" name="loadRef" maxlength="80" /></div>
+        <div class="form-field"><label for="tripOrigin">Start location</label><input class="field" id="tripOrigin" name="origin" required /></div>
+        <div class="form-field"><label for="tripDestination">Destination</label><input class="field" id="tripDestination" name="destination" required /></div>
+        <div class="form-field"><label for="tripDistance">Estimated route miles</label><input class="field" id="tripDistance" name="distanceMiles" type="number" min="1" max="5000" step="1" required /></div>
+        <div class="form-field"><label for="tripSpeed">Average speed (MPH)</label><input class="field" id="tripSpeed" name="averageSpeedMph" type="number" min="10" max="75" step="1" value="55" required /></div>
+        <div class="form-field"><label for="tripFuel">Fuel currently onboard (gal)</label><input class="field" id="tripFuel" name="currentFuelGallons" type="number" min="0" step="0.1" required /></div>
+        <div class="form-field"><label for="tripHos">Driver-entered hours remaining</label><input class="field" id="tripHos" name="hosRemainingHours" type="number" min="0" max="11" step="0.1" required /></div>
+        <div class="form-field full"><label for="tripOvernight">Driver-selected overnight stop / city</label><input class="field" id="tripOvernight" name="overnightStopLocation" maxlength="120" placeholder="Optional location to verify" /></div>
+        <div class="finance-form-actions"><button class="primary" type="submit">Build trip estimate</button></div>
+      </form>
+      <p class="finance-note">No maps, traffic, truck restrictions, fuel availability, or ELD data are connected. Distances, refuel mileage, driving time, and rest suggestions are estimates only; verify the route, hours, and safe parking before dispatch.</p>
+      <section class="finance-section"><h3>Saved estimates</h3><div class="table-wrap"><table class="finance-table"><thead><tr><th>Route / unit</th><th>Distance</th><th>Driving estimate</th><th>Fuel-stop windows</th><th>Overnight suggestion</th></tr></thead><tbody>${plans.length ? plans.map(plan => `<tr><td>${escapeHtml(plan.origin)} → ${escapeHtml(plan.destination)}<small class="unit-meta">Unit ${escapeHtml(plan.unit)}${plan.loadRef ? ` · ${escapeHtml(plan.loadRef)}` : ''}</small></td><td>${Number(plan.distanceMiles).toLocaleString()} mi</td><td>${Number(plan.estimatedDrivingHours).toFixed(1)} hr</td><td>${plan.stops.fuelStops.length ? plan.stops.fuelStops.map(stop => `${stop.atMile} mi`).join(', ') : 'No stop estimated'}</td><td>${plan.stops.overnightStop ? `Near mile ${plan.stops.overnightStop.atMile}${plan.stops.overnightStop.suggestedLocation ? ` · ${escapeHtml(plan.stops.overnightStop.suggestedLocation)}` : ''}` : 'Not indicated by entered hours'}</td></tr>`).join('') : '<tr><td colspan="5"><div class="empty-state">No trip estimates saved.</div></td></tr>'}</tbody></table></div></section>`;
+      const form = document.getElementById('tripPlanForm');
+      const unit = form.elements.unit;
+      const loadVehicleInputs = () => {
+        const vehicle = fleet.find(item => item.unit === unit.value);
+        if (vehicle) { form.elements.currentFuelGallons.value = vehicle.fuelGallons; form.elements.hosRemainingHours.value = vehicle.hosRemainingHours; }
+      };
+      unit.addEventListener('change', loadVehicleInputs);
+      loadVehicleInputs();
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const values = Object.fromEntries(new FormData(form).entries());
+        for (const field of ['distanceMiles', 'averageSpeedMph', 'currentFuelGallons', 'hosRemainingHours']) values[field] = Number(values[field]);
+        try { await financeRequest('/api/fleet/trips', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(values) }); showToast('Trip estimate saved'); renderTrips(); }
+        catch (error) { showToast(error.message); }
+      });
+    }
+    async function renderDvir() {
+      const content = document.getElementById('managementContent');
+      document.getElementById('managementTitle').textContent = 'Digital vehicle inspections';
+      document.getElementById('managementSubtitle').textContent = 'Record pre- and post-trip checks; route failed items to maintenance review.';
+      if (!apiMode) { content.innerHTML = '<div class="empty-state">DVIR records require the CommandOS server.</div>'; return; }
+      const fleet = getFleet();
+      let records;
+      try { records = await financeRequest('/api/fleet/dvir'); }
+      catch (error) { content.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`; return; }
+      const checklist = ['Service brakes', 'Tires and wheels', 'Lights and reflectors', 'Steering', 'Coupling devices', 'Mirrors and windshield', 'Emergency equipment', 'Leaks and fluid levels'];
+      const recordRows = records.length ? records.map(record => `<tr><td>${escapeHtml(record.unit)} · ${escapeHtml(record.driver)}</td><td>${escapeHtml(record.inspectionType)}</td><td>${Number(record.odometerMiles).toLocaleString()} mi</td><td>${record.checks.filter(check => check.status === 'fail').map(check => escapeHtml(check.item)).join(', ') || 'No failed items'}</td><td><span class="status ${record.status === 'Needs repair' ? 'warn' : record.status === 'Repair complete' ? 'neutral' : 'live'}">${escapeHtml(record.status)}</span></td><td>${record.status === 'Needs repair' && ['Owner / Admin', 'Maintenance'].includes(currentUserRole) ? `<button class="finance-paid" data-dvir-repair="${escapeHtml(record.id)}">MARK REPAIRED</button>` : '—'}</td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">No inspection records yet.</div></td></tr>';
+      content.innerHTML = `<form class="finance-form" id="dvirForm">
+        <div class="form-field"><label for="dvirUnit">Vehicle</label><select class="select-field" id="dvirUnit" name="unit">${fleet.map(vehicle => `<option value="${escapeHtml(vehicle.unit)}">Unit ${escapeHtml(vehicle.unit)} · ${escapeHtml(vehicle.vehicle)}</option>`).join('')}</select></div>
+        <div class="form-field"><label for="dvirType">Inspection</label><select class="select-field" id="dvirType" name="inspectionType"><option value="pre-trip">Pre-trip</option><option value="post-trip">Post-trip</option></select></div>
+        <div class="form-field"><label for="dvirOdometer">Odometer miles</label><input class="field" id="dvirOdometer" name="odometerMiles" type="number" min="0" step="0.1" required /></div>
+        <div class="form-field"><label for="dvirDriver">Assigned driver</label><input class="field" id="dvirDriver" value="${escapeHtml(fleet[0]?.driver || '')}" disabled /></div>
+        <div class="form-field full"><label>Inspection checklist</label>${checklist.map((item, index) => `<div class="finance-budget"><strong>${escapeHtml(item)}</strong><select class="select-field dvir-check" data-check-index="${index}" aria-label="${escapeHtml(item)} status" required><option value="">Select result</option><option value="pass">Pass</option><option value="fail">Defect found</option></select></div>`).join('')}</div>
+        <div class="form-field full"><label for="dvirNotes">Defects / notes</label><textarea class="field" id="dvirNotes" name="notes" maxlength="1000"></textarea></div>
+        <div class="finance-form-actions"><button class="primary" type="submit">Save inspection</button></div>
+      </form>
+      <p class="finance-note">This digital checklist is a recordkeeping aid, not a replacement for required inspection procedures or official DVIR obligations. Failed checks flag the unit for maintenance; repair completion must be recorded by an authorized role.</p>
+      <section class="finance-section"><h3>Inspection history</h3><div class="table-wrap"><table class="finance-table"><thead><tr><th>Unit / driver</th><th>Type</th><th>Odometer</th><th>Defects</th><th>Status</th><th>Action</th></tr></thead><tbody>${recordRows}</tbody></table></div></section>`;
+      document.getElementById('dvirUnit').addEventListener('change', event => { const vehicle = fleet.find(item => item.unit === event.target.value); document.getElementById('dvirDriver').value = vehicle?.driver || ''; });
+      document.getElementById('dvirForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const values = Object.fromEntries(new FormData(form).entries());
+        values.odometerMiles = Number(values.odometerMiles);
+        values.checks = [...form.querySelectorAll('.dvir-check')].map((select, index) => ({ item: checklist[index], status: select.value }));
+        try { await financeRequest(`/api/fleet/${encodeURIComponent(values.unit)}/dvir`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(values) }); showToast('Vehicle inspection saved'); renderDvir(); }
+        catch (error) { showToast(error.message); }
+      });
+      content.querySelectorAll('[data-dvir-repair]').forEach(button => button.addEventListener('click', async () => {
+        try { await financeRequest(`/api/fleet/dvir/${encodeURIComponent(button.dataset.dvirRepair)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'Repair complete' }) }); showToast('DVIR repair marked complete'); renderDvir(); }
+        catch (error) { showToast(error.message); }
+      }));
+    }
+    async function renderAdvisor() {
+      const content = document.getElementById('managementContent');
+      document.getElementById('managementTitle').textContent = 'Business advisor';
+      document.getElementById('managementSubtitle').textContent = 'Record-backed operating signals for an executive review.';
+      content.innerHTML = '<div class="empty-state">Reviewing current records...</div>';
+      let advisor;
+      try { advisor = await financeRequest('/api/advisor'); }
+      catch (error) { content.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`; return; }
+      const metrics = advisor.metrics;
+      const metricCards = [
+        [formatMoney(metrics.currentCashCents), 'Entered current cash'],
+        [formatMoney(metrics.openReceivableCents), 'Open receivables'],
+        [metrics.costPerMileCents === null ? 'No mileage data' : `${formatMoney(metrics.costPerMileCents)}/mi`, 'Estimated cost per mile'],
+        [metrics.fleetUtilizationPercent === null ? 'No fleet data' : `${metrics.fleetUtilizationPercent}%`, 'Fleet moving'],
+        [String(metrics.atRiskLoadCount), 'At-risk loads'],
+        [String(metrics.maintenanceReviewCount), 'Units to review'],
+        [metrics.loadAssignmentRatePercent === null ? 'No active loads' : `${metrics.loadAssignmentRatePercent}%`, 'Active loads assigned to drivers'],
+        [String(metrics.manualHosWarningCount), 'Moving units with low entered HOS'],
+        [metrics.debtToIncomeCents === null ? 'Not tracked' : formatMoney(metrics.debtToIncomeCents), 'Debt / income']
+      ];
+      const laneRows = metrics.laneProfitability.length ? metrics.laneProfitability.slice(0, 5).map(group => `<tr><td>${escapeHtml(group.name)}</td><td>${group.loads}</td><td>${formatMoney(group.revenueCents)}</td><td>${formatMoney(group.knownCostsCents)}</td><td>${formatMoney(group.knownProfitCents)}</td><td>${group.loadsWithCostInputs}/${group.loads}</td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">No load records available.</div></td></tr>';
+      const customerRows = metrics.customerProfitability.length ? metrics.customerProfitability.slice(0, 5).map(group => `<tr><td>${escapeHtml(group.name)}</td><td>${group.loads}</td><td>${formatMoney(group.revenueCents)}</td><td>${formatMoney(group.knownCostsCents)}</td><td>${formatMoney(group.knownProfitCents)}</td><td>${group.loadsWithCostInputs}/${group.loads}</td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">No customer load records available.</div></td></tr>';
+      const fuelRows = metrics.fuelCostPerMileByDriver.length ? metrics.fuelCostPerMileByDriver.map(driver => `<tr><td>${escapeHtml(driver.driver)}</td><td>${Number(driver.miles).toLocaleString()} mi</td><td>${formatMoney(driver.fuelCostPerMileCents)}/mi</td></tr>`).join('') : '<tr><td colspan="3"><div class="empty-state">No per-driver fuel-cost inputs yet.</div></td></tr>';
+      content.innerHTML = `<div class="finance-kpis">${metricCards.map(([value, label]) => `<div class="management-kpi"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></div>`).join('')}</div>
+        <p class="finance-note">Rules-based decision support from entered CommandOS records. It is not generative AI and does not include live provider data. “Assigned” means a driver name is present, not that a dispatcher accepted the load. HOS warnings use manually entered values, not ELD data.</p>
+        <section class="finance-section"><h3>Signals for review</h3>${advisor.insights.map(insight => `<div class="exception"><span class="severity ${insight.priority === 'High' ? '' : 'amber'}"></span><div class="exception-body"><strong>${escapeHtml(insight.title)}</strong><p>${escapeHtml(insight.area)} · ${escapeHtml(insight.detail)}</p><p>Source records: ${insight.sources.length ? insight.sources.map(source => escapeHtml(source)).join(', ') : 'No rule-triggered source record'}</p></div><span class="status ${insight.priority === 'High' ? 'warn' : 'neutral'}">${escapeHtml(insight.priority)}</span></div>`).join('')}</section>
+        <div class="finance-columns">
+          <section class="finance-section"><h3>Lane profitability · known records</h3><p>${escapeHtml(metrics.dataQualityNote)}</p><div class="table-wrap"><table class="finance-table"><thead><tr><th>Lane</th><th>Loads</th><th>Revenue</th><th>Known costs</th><th>Known profit</th><th>Cost coverage</th></tr></thead><tbody>${laneRows}</tbody></table></div></section>
+          <section class="finance-section"><h3>Customer profitability · known records</h3><p>Unrecorded costs reduce the reliability of these comparisons.</p><div class="table-wrap"><table class="finance-table"><thead><tr><th>Customer</th><th>Loads</th><th>Revenue</th><th>Known costs</th><th>Known profit</th><th>Cost coverage</th></tr></thead><tbody>${customerRows}</tbody></table></div></section>
+        </div>
+        <section class="finance-section"><h3>Driver fuel cost per mile</h3><p>This compares entered fuel cost rates, not MPG or driving behavior.</p><div class="table-wrap"><table class="finance-table"><thead><tr><th>Driver</th><th>Entered miles</th><th>Fuel cost rate</th></tr></thead><tbody>${fuelRows}</tbody></table></div></section>
+        <p class="finance-note">Debt/gross-income, verified MPG efficiency, dwell time, and dispatcher-specific load ratios are not captured yet. No advisor action is automatic.</p>`;
+    }
+    async function renderReadiness() {
+      const content = document.getElementById('managementContent');
+      document.getElementById('managementTitle').textContent = 'Startup and compliance readiness';
+      document.getElementById('managementSubtitle').textContent = 'Track owners, dates, and follow-up status across operating setup.';
+      let items;
+      try { items = await financeRequest('/api/readiness'); }
+      catch (error) { content.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`; return; }
+      const complete = items.filter(item => item.status === 'Complete' || item.status === 'Not applicable').length;
+      const overdue = items.filter(item => item.dueDate && item.dueDate < new Date().toISOString().slice(0, 10) && !['Complete', 'Not applicable'].includes(item.status)).length;
+      const editable = ['Owner / Admin', 'Safety'].includes(currentUserRole);
+      content.innerHTML = `<div class="management-kpis"><div class="management-kpi"><strong>${complete} / ${items.length}</strong><span>Items closed</span></div><div class="management-kpi"><strong>${items.length ? Math.round(complete / items.length * 100) : 0}%</strong><span>Checklist completion</span></div><div class="management-kpi"><strong>${overdue}</strong><span>Past due</span></div></div>
+        <p class="finance-note">This is a tracking checklist based on company-entered information, not legal or regulatory advice. Verify each requirement and due date with the relevant government agency, insurer, or qualified professional. Store sensitive identifiers in an approved secure system, not in notes.</p>
+        <div class="table-wrap"><table class="finance-table"><thead><tr><th>Area / item</th><th>Guidance</th><th>Status</th><th>Due date</th><th>Notes</th><th>Updated by</th><th>Action</th></tr></thead><tbody>${items.map(item => `<tr><td>${escapeHtml(item.title)}<small class="unit-meta">${escapeHtml(item.category)}</small></td><td>${escapeHtml(item.guidance)}</td><td><select class="select-field readiness-status" data-readiness-id="${escapeHtml(item.id)}" ${editable ? '' : 'disabled'}>${['Not started', 'In progress', 'Complete', 'Not applicable'].map(status => `<option ${status === item.status ? 'selected' : ''}>${status}</option>`).join('')}</select></td><td><input class="field readiness-due" data-readiness-id="${escapeHtml(item.id)}" type="date" value="${escapeHtml(item.dueDate)}" ${editable ? '' : 'disabled'} /></td><td><input class="field readiness-notes" data-readiness-id="${escapeHtml(item.id)}" maxlength="1000" value="${escapeHtml(item.notes)}" ${editable ? '' : 'disabled'} /></td><td>${escapeHtml(item.updatedBy || '—')}</td><td>${editable ? `<button class="finance-paid" data-readiness-save="${escapeHtml(item.id)}">SAVE</button>` : 'View only'}</td></tr>`).join('')}</tbody></table></div>`;
+      content.querySelectorAll('[data-readiness-save]').forEach(button => button.addEventListener('click', async () => {
+        const id = button.dataset.readinessSave;
+        const update = {
+          status: content.querySelector(`.readiness-status[data-readiness-id="${CSS.escape(id)}"]`).value,
+          dueDate: content.querySelector(`.readiness-due[data-readiness-id="${CSS.escape(id)}"]`).value,
+          notes: content.querySelector(`.readiness-notes[data-readiness-id="${CSS.escape(id)}"]`).value
+        };
+        try { await financeRequest(`/api/readiness/${encodeURIComponent(id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(update) }); showToast('Readiness item updated'); renderReadiness(); }
+        catch (error) { showToast(error.message); }
+      }));
+    }
+    async function renderPerformance() {
+      const content = document.getElementById('managementContent');
+      document.getElementById('managementTitle').textContent = 'Performance scorecards';
+      document.getElementById('managementSubtitle').textContent = 'Weighted evidence review for HR and company leadership.';
+      let scorecards;
+      try { scorecards = await financeRequest('/api/people/scorecards'); }
+      catch (error) { content.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`; return; }
+      const rows = scorecards.length ? scorecards.map(card => `<tr><td>${escapeHtml(card.employeeName)}<small class="unit-meta">${escapeHtml(card.jobRole)}</small></td><td>${card.quantitativeScore}</td><td>${card.strategicScore}</td><td>${card.qualitativeScore}</td><td>${card.reliabilityScore}</td><td>${Number(card.overallScore).toFixed(1)}%</td><td>${escapeHtml(card.grade)}</td><td><span class="status ${card.status === 'Reviewed' ? 'live' : 'warn'}">${escapeHtml(card.status)}</span><small class="unit-meta">${escapeHtml(card.reviewedBy || card.createdBy)}</small></td><td>${escapeHtml(card.evidenceNotes)}${card.reviewerNotes ? `<small class="unit-meta">Review: ${escapeHtml(card.reviewerNotes)}</small>` : ''}</td><td>${card.status === 'Draft' ? `<div class="load-actions"><input class="field scorecard-review-note" data-scorecard-note="${escapeHtml(card.id)}" maxlength="1000" placeholder="Human review note" /><button class="finance-paid" data-scorecard-review="${escapeHtml(card.id)}">MARK REVIEWED</button></div>` : '—'}</td></tr>`).join('') : '<tr><td colspan="10"><div class="empty-state">No performance scorecards recorded.</div></td></tr>';
+      content.innerHTML = `<div class="finance-kpis"><div class="management-kpi"><strong>${scorecards.length}</strong><span>Scorecards</span></div><div class="management-kpi"><strong>${scorecards.filter(card => card.status === 'Draft').length}</strong><span>Awaiting human review</span></div><div class="management-kpi"><strong>40 / 30 / 20 / 10</strong><span>Metric weights (%)</span></div></div>
+        <p class="finance-warning">Decision support only. Scores do not automatically determine hiring, termination, pay, promotion, or discipline. Review evidence, allow correction and employee response, and follow your HR policies and applicable law.</p>
+        <section class="finance-section" style="border-top:0;padding-top:0;margin-top:0"><h3>Create scorecard draft</h3><p>Enter documented evidence for each score. Scale: 0–100. Weights: quantitative 40%, strategic goals 30%, qualitative feedback 20%, reliability and growth 10%.</p>
+          <form class="finance-form" id="scorecardForm">
+            <div class="form-field"><label for="scoreEmployee">Employee name</label><input class="field" id="scoreEmployee" name="employeeName" maxlength="120" required /></div>
+            <div class="form-field"><label for="scoreRole">Job role</label><input class="field" id="scoreRole" name="jobRole" maxlength="80" required /></div>
+            <div class="form-field"><label for="scoreQuant">Quantitative KPIs · 40%</label><input class="field scorecard-metric" id="scoreQuant" name="quantitativeScore" type="number" min="0" max="100" step="1" required /></div>
+            <div class="form-field"><label for="scoreStrategic">Strategic / OKR goals · 30%</label><input class="field scorecard-metric" id="scoreStrategic" name="strategicScore" type="number" min="0" max="100" step="1" required /></div>
+            <div class="form-field"><label for="scoreQualitative">Qualitative feedback · 20%</label><input class="field scorecard-metric" id="scoreQualitative" name="qualitativeScore" type="number" min="0" max="100" step="1" required /></div>
+            <div class="form-field"><label for="scoreReliability">Reliability and growth · 10%</label><input class="field scorecard-metric" id="scoreReliability" name="reliabilityScore" type="number" min="0" max="100" step="1" required /></div>
+            <div class="form-field full"><label for="scoreEvidence">Evidence and source systems</label><textarea class="field" id="scoreEvidence" name="evidenceNotes" minlength="5" maxlength="1000" required placeholder="Record the period, KPI/OKR evidence, review sources, and known gaps."></textarea></div>
+            <div class="form-field full"><label for="scoreReviewerNotes">Initial reviewer context</label><textarea class="field" id="scoreReviewerNotes" name="reviewerNotes" maxlength="1000"></textarea></div>
+            <div class="finance-allocation"><strong id="scorePreview">—</strong><small id="scoreGradePreview">Enter all four metric scores for a preview</small></div>
+            <div class="finance-form-actions"><button class="primary" type="submit">Save draft for human review</button></div>
+          </form>
+        </section>
+        <section class="finance-section"><h3>Scorecard history</h3><p>Reviewed by a person · weights are visible above · source evidence remains attached.</p><div class="table-wrap"><table class="finance-table"><thead><tr><th>Employee</th><th>KPI</th><th>Goals</th><th>Feedback</th><th>Reliability</th><th>Weighted score</th><th>Band</th><th>Review status</th><th>Evidence / notes</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+      const form = document.getElementById('scorecardForm');
+      const updatePreview = () => {
+        const values = ['quantitativeScore', 'strategicScore', 'qualitativeScore', 'reliabilityScore'].map(name => form.elements[name].value);
+        if (values.some(value => value === '')) { document.getElementById('scorePreview').textContent = '—'; document.getElementById('scoreGradePreview').textContent = 'Enter all four metric scores for a preview'; return; }
+        const score = Math.round((Number(values[0]) * 0.4 + Number(values[1]) * 0.3 + Number(values[2]) * 0.2 + Number(values[3]) * 0.1) * 10) / 10;
+        const grade = score >= 90 ? 'A to A+' : score >= 80 ? 'B to B+' : score >= 70 ? 'C to C+' : score >= 60 ? 'D' : 'F';
+        document.getElementById('scorePreview').textContent = `${score.toFixed(1)}%`;
+        document.getElementById('scoreGradePreview').textContent = `${grade} · draft preview`;
+      };
+      form.querySelectorAll('.scorecard-metric').forEach(input => input.addEventListener('input', updatePreview));
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const values = Object.fromEntries(new FormData(form).entries());
+        for (const field of ['quantitativeScore', 'strategicScore', 'qualitativeScore', 'reliabilityScore']) values[field] = Number(values[field]);
+        try { await financeRequest('/api/people/scorecards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(values) }); showToast('Scorecard draft saved for human review'); renderPerformance(); }
+        catch (error) { showToast(error.message); }
+      });
+      content.querySelectorAll('[data-scorecard-review]').forEach(button => button.addEventListener('click', async () => {
+        const id = button.dataset.scorecardReview;
+        const reviewerNotes = content.querySelector(`[data-scorecard-note="${CSS.escape(id)}"]`).value;
+        try { await financeRequest(`/api/people/scorecards/${encodeURIComponent(id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'Reviewed', reviewerNotes }) }); showToast('Human review recorded'); renderPerformance(); }
+        catch (error) { showToast(error.message); }
+      }));
+    }
+    function renderManagement() { if (activeManagementView === 'finance') { renderFinance(); return; } if (activeManagementView === 'billing') { renderBilling(); return; } if (activeManagementView === 'fleetProfiles') { renderFleetProfiles(); return; } if (activeManagementView === 'trips') { renderTrips(); return; } if (activeManagementView === 'dvir') { renderDvir(); return; } if (activeManagementView === 'advisor') { renderAdvisor(); return; } if (activeManagementView === 'readiness') { renderReadiness(); return; } if (activeManagementView === 'performance') { renderPerformance(); return; } const view = managementViews[activeManagementView]; document.getElementById('managementTitle').textContent = view.title; document.getElementById('managementSubtitle').textContent = view.subtitle; const rows = activeManagementView === 'warehousing' && apiWarehouses ? apiWarehouses.map(record => [record.facility, record.location, record.capacity, record.status]) : view.rows; document.getElementById('managementContent').innerHTML = `<div class="management-kpis">${view.kpis.map(kpi => `<div class="management-kpi"><strong>${escapeHtml(kpi[0])}</strong><span>${escapeHtml(kpi[1])}</span></div>`).join('')}</div><div class="table-wrap"><table class="management-table"><thead><tr>${view.headers.map(header => `<th>${escapeHtml(header)}</th>`).join('')}</tr></thead><tbody>${rows.map(row => `<tr>${row.map((cell, index) => `<td>${index === row.length - 1 ? `<span class="status ${cell === 'Review' || cell === 'Watch' ? 'warn' : cell === 'Pipeline' ? 'neutral' : 'live'}">${escapeHtml(cell)}</span>` : escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+    async function renderDocuments() {
+      document.getElementById('managementTitle').textContent = 'Document center';
+      document.getElementById('managementSubtitle').textContent = 'Store receipts and freight files; prepare print-ready business materials.';
+      const content = document.getElementById('managementContent');
+      if (!apiMode || !apiDocuments) { content.innerHTML = '<div class="empty-state">Document storage requires the CommandOS server.</div>'; return; }
+      const rows = apiDocuments.length ? apiDocuments.map(item => `<tr><td>${escapeHtml(item.name)}<small class="unit-meta">${escapeHtml(item.id)}</small></td><td>${escapeHtml(item.type)}</td><td>${escapeHtml(item.reference)}</td><td>${escapeHtml(item.owner)}</td><td><span class="status ${item.status === 'Needs review' || item.status === 'Expiring soon' ? 'warn' : item.status === 'Filed' ? 'neutral' : 'live'}">${escapeHtml(item.status)}</span></td><td>${item.hasFile ? `<a class="document-link" href="/api/documents/${encodeURIComponent(item.id)}/file" target="_blank" rel="noopener">${escapeHtml(item.fileName || 'DOWNLOAD')}</a><small class="unit-meta">${Math.ceil(item.fileSize / 1024)} KB</small>` : 'Metadata only'}</td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">No document records yet.</div></td></tr>';
+      content.innerHTML = `<div class="management-kpis"><div class="management-kpi"><strong>${apiDocuments.length}</strong><span>Document records</span></div><div class="management-kpi"><strong>${apiDocuments.filter(item => item.hasFile).length}</strong><span>Files attached</span></div><div class="management-kpi"><strong>${apiDocuments.filter(item => item.status === 'Needs review' || item.status === 'Expiring soon').length}</strong><span>Needs attention</span></div></div>
+        <div class="document-studio">
+          <section class="finance-section" style="border-top:0;padding-top:0;margin-top:0"><h3>Upload a receipt or freight document</h3><p>PDF, PNG, or JPEG · maximum 512 KB per file. Sensitive driver files are limited to authorized roles.</p>
+            <form class="finance-form" id="documentUploadForm">
+              <div class="form-field"><label for="documentName">Record name</label><input class="field" id="documentName" name="name" maxlength="120" required /></div>
+              <div class="form-field"><label for="documentType">Document type</label><select class="select-field" id="documentType" name="type"><option>Receipt</option><option>BOL</option><option>POD</option><option>Rate confirmation</option><option>Driver file</option><option>DVIR</option><option>Maintenance</option><option>Other</option></select></div>
+              <div class="form-field"><label for="documentReference">Load / unit / invoice reference</label><input class="field" id="documentReference" name="reference" maxlength="120" required /></div>
+              <div class="form-field"><label for="documentStatus">Review status</label><select class="select-field" id="documentStatus" name="status"><option>Filed</option><option>Needs review</option><option>Expiring soon</option><option>Ready</option></select></div>
+              <div class="form-field full"><label for="documentFile">Attachment</label><input class="field" id="documentFile" name="file" type="file" accept="application/pdf,image/png,image/jpeg,.pdf,.png,.jpg,.jpeg" /></div>
+              <div class="finance-form-actions"><button class="primary" type="submit">Save document</button></div>
+            </form>
+          </section>
+          <section class="finance-section" style="border-top:0;padding-top:0;margin-top:0"><h3>Printable document studio</h3><p>Enter approved company content. Open a print layout and use your browser’s Print / Save as PDF command.</p>
+            <form class="finance-form" id="documentTemplateForm">
+              <div class="form-field"><label for="templateType">Template</label><select class="select-field" id="templateType" name="templateType"><option value="brochure">Service brochure</option><option value="rate-sheet">Rate sheet</option><option value="handbook">Driver handbook</option><option value="recruiting">Recruitment flyer</option></select></div>
+              <div class="form-field"><label for="templateCompany">Company name</label><input class="field" id="templateCompany" name="company" value="Jackson Logistics" required maxlength="100" /></div>
+              <div class="form-field"><label for="templateEmail">Business email</label><input class="field" id="templateEmail" name="email" type="email" maxlength="254" /></div>
+              <div class="form-field"><label for="templatePhone">Business phone</label><input class="field" id="templatePhone" name="phone" type="tel" maxlength="40" /></div>
+              <div class="form-field full"><label for="templateEquipment">Equipment and services</label><input class="field" id="templateEquipment" name="equipment" value="Dry van · Regional freight" maxlength="200" /></div>
+              <div class="form-field full"><label for="templateDetails">Company-approved details, lanes, rates, or policies</label><textarea class="field" id="templateDetails" name="details" maxlength="5000" placeholder="Add verified service lanes, rate terms, handbook sections, or recruiting information. One item per line."></textarea></div>
+              <div class="finance-form-actions"><button class="primary" type="submit">Open print layout</button></div>
+            </form>
+          </section>
+        </div>
+        <section class="finance-section"><h3>Document register</h3><div class="table-wrap"><table class="finance-table"><thead><tr><th>Document</th><th>Type</th><th>Reference</th><th>Added by</th><th>Status</th><th>Attachment</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+      document.getElementById('documentUploadForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const values = Object.fromEntries([...new FormData(form).entries()].filter(([key]) => key !== 'file'));
+        const file = form.elements.file.files[0];
+        if (file) {
+          if (file.size > 524288) { showToast('Choose a file no larger than 512 KB'); return; }
+          if (!['application/pdf', 'image/png', 'image/jpeg'].includes(file.type)) { showToast('Only PDF, PNG, or JPEG files are accepted'); return; }
+          try {
+            const dataUrl = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = () => reject(new Error('Could not read the selected file')); reader.readAsDataURL(file); });
+            values.fileName = file.name;
+            values.mimeType = file.type;
+            values.fileBase64 = String(dataUrl).split(',')[1];
+          } catch (error) { showToast(error.message); return; }
+        }
+        try { await financeRequest('/api/documents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(values) }); apiDocuments = await financeRequest('/api/documents'); showToast('Document saved'); renderDocuments(); }
+        catch (error) { showToast(error.message); }
+      });
+      document.getElementById('documentTemplateForm').addEventListener('submit', event => {
+        event.preventDefault();
+        const values = Object.fromEntries(new FormData(event.currentTarget).entries());
+        const company = escapeHtml(values.company.trim());
+        const email = escapeHtml(values.email.trim());
+        const phone = escapeHtml(values.phone.trim());
+        const equipment = escapeHtml(values.equipment.trim());
+        const detailItems = values.details.split('\n').map(line => line.trim()).filter(Boolean).map(line => `<li>${escapeHtml(line)}</li>`).join('');
+        const details = values.details.split('\n').map(line => line.trim()).filter(Boolean).map(line => `<p>${escapeHtml(line)}</p>`).join('');
+        const headings = { brochure: ['Freight services', 'Service brochure'], 'rate-sheet': ['Lane and rate schedule', 'Rate sheet'], handbook: ['Driver operations guide', 'Driver handbook'], recruiting: ['Build your next driving chapter', 'Recruitment flyer'] };
+        const [headline, label] = headings[values.templateType];
+        const contact = [email ? `<a href="mailto:${email}">${email}</a>` : '', phone ? escapeHtml(phone) : ''].filter(Boolean).join(' · ');
+        const templateContent = values.templateType === 'brochure' ? `<section><h2>What we move</h2><p>${equipment || 'Transportation services'}</p><h2>Where we operate</h2><ul>${detailItems || '<li>Add verified service lanes and capabilities.</li>'}</ul><h2>How to work with us</h2><p>Contact our team to discuss capacity, schedules, and shipment requirements.</p></section>`
+          : values.templateType === 'rate-sheet' ? `<section><h2>Rates and terms</h2><p>${equipment || 'Freight services'}</p><ul>${detailItems || '<li>Add approved lane, equipment, and rate terms.</li>'}</ul><p>Confirm accessorials, fuel surcharge, dates, and capacity in the signed rate confirmation.</p></section>`
+          : values.templateType === 'handbook' ? `<section><h2>Operating information</h2><p>${equipment || 'Driver operations'}</p>${details || '<p>Add current, company-approved policies and emergency contacts before distribution.</p>'}<p class="notice">This template is a layout aid. Review against current company policy and applicable requirements before issuing.</p></section>`
+          : `<section><h2>Drive with ${company}</h2><p>${equipment || 'Explore driving opportunities with our team.'}</p><ul>${detailItems || '<li>Add verified role expectations, qualifications, and contact instructions.</li>'}</ul><p>Contact us to discuss open roles and next steps.</p></section>`;
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) { showToast('Allow pop-ups to open the print layout'); return; }
+        printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${label} · ${company}</title><style>@page{size:letter;margin:.65in}*{box-sizing:border-box}body{margin:0;color:#202b29;font:15px/1.6 Georgia,serif}.masthead{padding:14px 0;border-bottom:2px solid #c9f269;display:flex;justify-content:space-between;gap:20px;align-items:end}.brand{font:700 13px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}.label{font:11px Arial,sans-serif;color:#60726d;text-transform:uppercase}.hero{padding:52px 0 38px;border-bottom:1px solid #dce5df}.hero h1{font:700 38px/1.1 Georgia,serif;margin:0 0 10px}.hero p{font:13px Arial,sans-serif;color:#60726d;margin:0}section{padding:24px 0}h2{font:700 18px Arial,sans-serif;margin:18px 0 8px}ul{padding-left:20px}li{margin:6px 0}.contact{margin-top:30px;padding:18px;background:#f4f7f1;font:12px Arial,sans-serif}.notice{margin-top:24px;padding:12px;border-left:3px solid #efaa4b;background:#fff8eb;font:12px Arial,sans-serif}.actions{padding:20px 0}@media print{.actions{display:none}a{color:inherit;text-decoration:none}}</style></head><body><header class="masthead"><span class="brand">${company}</span><span class="label">${label}</span></header><div class="hero"><h1>${headline}</h1><p>${equipment}</p></div>${templateContent}<footer class="contact"><strong>${company}</strong><br>${contact || 'Add approved company contact information before distribution.'}</footer><div class="actions"><button onclick="window.print()">Print / Save as PDF</button></div></body></html>`);
+        printWindow.document.close();
+      });
+    }
     async function renderAudit() { document.getElementById('managementTitle').textContent = 'Audit history'; document.getElementById('managementSubtitle').textContent = 'Accountability trail for shared operational records.'; const content = document.getElementById('managementContent'); if (!apiMode) { content.innerHTML = '<div class="empty-state">Audit history is available when signed in through the CommandOS server.</div>'; return; } content.innerHTML = '<div class="empty-state">Loading audit history...</div>'; const response = await fetch('/api/audit'); if (!response.ok) { content.innerHTML = '<div class="empty-state">Audit history is restricted to Owner / Admin.</div>'; return; } const entries = await response.json(); content.innerHTML = entries.length ? `<div class="table-wrap"><table class="management-table"><thead><tr><th>Actor</th><th>Action</th><th>Record</th><th>Details</th><th>Time</th></tr></thead><tbody>${entries.map(entry => `<tr><td>${escapeHtml(entry.actor)}<span class="unit-meta">${escapeHtml(entry.role)}</span></td><td>${escapeHtml(entry.action)}</td><td>${escapeHtml(entry.entityType)} · ${escapeHtml(entry.entityId)}</td><td>${escapeHtml(entry.details)}</td><td>${escapeHtml(new Date(entry.createdAt).toLocaleString())}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">No audit activity recorded yet.</div>'; }
-    async function renderUsers() { document.getElementById('managementTitle').textContent = 'User administration'; document.getElementById('managementSubtitle').textContent = 'Manage access, roles, and active status for CommandOS users.'; const content = document.getElementById('managementContent'); if (!apiMode) { content.innerHTML = '<div class="empty-state">User administration is available when signed in through the CommandOS server.</div>'; return; } content.innerHTML = '<div class="empty-state">Loading users...</div>'; const response = await fetch('/api/users'); if (!response.ok) { content.innerHTML = '<div class="empty-state">User administration is restricted to Owner / Admin.</div>'; return; } const users = await response.json(); const roles = ['Owner / Admin', 'Dispatcher', 'Safety', 'Maintenance', 'Accounting', 'Warehouse']; content.innerHTML = `<div class="table-wrap"><table class="management-table"><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody>${users.map(user => `<tr><td>${escapeHtml(user.name)}</td><td>${escapeHtml(user.email)}</td><td><select class="select-field user-role" data-user-id="${escapeHtml(user.id)}">${roles.map(role => `<option ${role === user.role ? 'selected' : ''}>${escapeHtml(role)}</option>`).join('')}</select></td><td><span class="status ${user.active ? 'live' : 'neutral'}">${user.active ? 'Active' : 'Inactive'}</span></td><td><button class="load-action user-save" data-user-id="${escapeHtml(user.id)}" data-active="${user.active}">SAVE</button></td></tr>`).join('')}</tbody></table></div>`; document.querySelectorAll('.user-save').forEach(button => button.addEventListener('click', () => updateUser(button.dataset.userId, button.dataset.active === '1'))); }
+    async function renderUsers() { document.getElementById('managementTitle').textContent = 'User administration'; document.getElementById('managementSubtitle').textContent = 'Manage access, roles, and active status for CommandOS users.'; const content = document.getElementById('managementContent'); if (!apiMode) { content.innerHTML = '<div class="empty-state">User administration is available when signed in through the CommandOS server.</div>'; return; } content.innerHTML = '<div class="empty-state">Loading users...</div>'; const response = await fetch('/api/users'); if (!response.ok) { content.innerHTML = '<div class="empty-state">User administration is restricted to Owner / Admin.</div>'; return; } const users = await response.json(); const roles = ['Owner / Admin', 'Dispatcher', 'Safety', 'Maintenance', 'Accounting', 'Warehouse', 'Driver']; content.innerHTML = `<div class="table-wrap"><table class="management-table"><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody>${users.map(user => `<tr><td>${escapeHtml(user.name)}</td><td>${escapeHtml(user.email)}</td><td><select class="select-field user-role" data-user-id="${escapeHtml(user.id)}">${roles.map(role => `<option ${role === user.role ? 'selected' : ''}>${escapeHtml(role)}</option>`).join('')}</select></td><td><span class="status ${user.active ? 'live' : 'neutral'}">${user.active ? 'Active' : 'Inactive'}</span></td><td><button class="load-action user-save" data-user-id="${escapeHtml(user.id)}" data-active="${user.active}">SAVE</button></td></tr>`).join('')}</tbody></table></div>`; document.querySelectorAll('.user-save').forEach(button => button.addEventListener('click', () => updateUser(button.dataset.userId, button.dataset.active === '1'))); }
     async function updateUser(userId, active) { const role = document.querySelector(`.user-role[data-user-id="${CSS.escape(userId)}"]`).value; const response = await fetch(`/api/users/${encodeURIComponent(userId)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role, active: Boolean(active) }) }); if (!response.ok) { showToast('User update failed'); return; } showToast('User permissions updated'); renderUsers(); }
-    function openManagement(view) { activeManagementView = view; document.querySelectorAll('.management-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.managementTab === view)); if (view === 'audit') renderAudit(); else if (view === 'users') renderUsers(); else renderManagement(); openOverlay('managementOverlay'); }
+    function openManagement(view) { activeManagementView = view; document.querySelectorAll('.management-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.managementTab === view)); if (view === 'audit') renderAudit(); else if (view === 'users') renderUsers(); else if (view === 'documents') renderDocuments(); else if (view === 'billing') renderBilling(); else renderManagement(); openOverlay('managementOverlay'); }
     const procedures = [
       { name: 'Major truck accident', department: 'Safety response', type: 'extreme', code: 'SAF-X01' },
       { name: 'Vehicle fire response', department: 'Safety response', type: 'extreme', code: 'SAF-X04' },
@@ -354,19 +920,28 @@
     let activeFilter = 'all';
     function renderSops() {
       const query = document.getElementById('sopSearch').value.toLowerCase().trim();
-      const matches = procedures.filter(procedure => (activeFilter === 'all' || procedure.type === activeFilter) && `${procedure.name} ${procedure.department} ${procedure.code}`.toLowerCase().includes(query));
-      document.getElementById('sopLibrary').innerHTML = matches.length ? matches.map(procedure => `<div class="library-row"><span class="sop-icon">${procedure.type === 'extreme' ? '!' : '↻'}</span><div class="sop-name">${procedure.name}<small>${procedure.department} · ${procedure.code}</small></div><span class="type-tag ${procedure.type}">${procedure.type}</span><button class="text-btn procedure-open" data-procedure="${procedure.name}">OPEN →</button></div>`).join('') : '<div class="empty-state">No procedures match this search.</div>';
-      document.querySelectorAll('.procedure-open').forEach(button => button.addEventListener('click', () => { closeOverlay('sopOverlay'); showToast(`${button.dataset.procedure} opened`); }));
+      const source = apiSops || procedures;
+      const matches = source.filter(procedure => (activeFilter === 'all' || procedure.type === activeFilter) && `${procedure.name} ${procedure.department} ${procedure.code}`.toLowerCase().includes(query));
+      document.getElementById('sopLibrary').innerHTML = matches.length ? matches.map(procedure => `<div class="library-row"><span class="sop-icon">${procedure.type === 'extreme' ? '!' : '↻'}</span><div class="sop-name">${escapeHtml(procedure.name)}<small>${escapeHtml(procedure.department)} · ${escapeHtml(procedure.code)} · v${escapeHtml(procedure.version || 1)}</small></div><span class="type-tag ${procedure.type}">${procedure.type}</span><button class="text-btn procedure-open" data-procedure="${escapeHtml(procedure.name)}">OPEN →</button>${procedure.acknowledged ? '<span class="status live">Acknowledged</span>' : `<button class="load-action sop-ack" data-sop-code="${escapeHtml(procedure.code)}">ACKNOWLEDGE</button>`}</div>`).join('') : '<div class="empty-state">No procedures match this search.</div>';
+      document.querySelectorAll('.procedure-open').forEach(button => button.addEventListener('click', () => openSopDetail(button.dataset.procedure)));
+      document.querySelectorAll('.sop-ack').forEach(button => button.addEventListener('click', () => acknowledgeSop(button.dataset.sopCode)));
     }
+    let selectedSopCode = null;
+    function openSopDetail(name) { const source = apiSops || procedures; const procedure = source.find(item => item.name === name); if (!procedure) return; selectedSopCode = procedure.code; document.getElementById('sopDetailTitle').textContent = procedure.name; document.getElementById('sopDetailSubtitle').textContent = `${procedure.department} · ${procedure.code}`; document.getElementById('sopDetailBody').textContent = procedure.type === 'extreme' ? 'Use this controlled emergency procedure when the activation criteria are met. Prioritize life safety, emergency response, evidence preservation, and escalation.' : 'Use this standard operating procedure for the normal recurring workflow. Complete each step, record exceptions, and escalate when the decision points require it.'; document.getElementById('sopDetailType').textContent = procedure.type === 'extreme' ? 'Extreme' : 'Standard'; document.getElementById('sopDetailVersion').textContent = `v${procedure.version || 1}`; document.getElementById('sopDetailOwner').textContent = procedure.department; document.getElementById('detailAcknowledge').textContent = procedure.acknowledged ? 'Acknowledged' : 'Acknowledge procedure'; openOverlay('sopDetailOverlay'); }
+    async function acknowledgeSop(code) { if (!apiMode) { showToast('Sign in through CommandOS to acknowledge SOPs'); return; } const response = await fetch(`/api/sops/${encodeURIComponent(code)}/acknowledge`, { method: 'POST' }); if (!response.ok) { showToast('SOP acknowledgment failed'); return; } const sop = apiSops.find(item => item.code === code); if (sop) sop.acknowledged = 1; renderSops(); showToast('SOP acknowledgment recorded'); }
     function openOverlay(id) { document.getElementById(id).classList.add('open'); }
     function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
     function openSopCenter() { renderSops(); openOverlay('sopOverlay'); document.getElementById('sopSearch').focus(); }
-    document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => { document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active')); item.classList.add('active'); if (item.textContent.includes('SOP Center')) { openSopCenter(); } else if (item.textContent.includes('Loads')) { openLoadBoard(); } else if (item.textContent.includes('Fleet')) { openFleet(); } else if (item.textContent.includes('Finance')) { openManagement('finance'); } else if (item.textContent.includes('People')) { openManagement('people'); } else if (item.textContent.includes('Warehousing')) { openManagement('warehousing'); } else { showToast(item.textContent.trim() + ' workspace selected'); } }));
+    document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => { document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active')); item.classList.add('active'); if (item.textContent.includes('Overview')) { document.querySelectorAll('.overlay').forEach(overlay => overlay.classList.remove('open')); window.scrollTo({ top: 0, behavior: 'smooth' }); } else if (item.textContent.includes('Dispatch')) { openLoadBoard(); } else if (item.textContent.includes('SOP Center')) { openSopCenter(); } else if (item.textContent.includes('Loads')) { openLoadBoard(); } else if (item.textContent.includes('Fleet')) { openFleet(); } else if (item.textContent.includes('Finance')) { openManagement('finance'); } else if (item.textContent.includes('People')) { openManagement('people'); } else if (item.textContent.includes('Warehousing')) { openManagement('warehousing'); } else if (item.textContent.includes('Settings')) { openOverlay('settingsOverlay'); } else { showToast(item.textContent.trim() + ' workspace selected'); } }));
     document.getElementById('reportBtn').addEventListener('click', () => openOverlay('incidentOverlay'));
-    document.getElementById('allExceptions').addEventListener('click', () => showToast('Showing all open exceptions'));
+    function renderQuickResults(mode = 'search') { const query = document.getElementById('globalSearch').value.toLowerCase().trim(); const result = document.getElementById('quickResults'); const savedIncidents = getSavedIncidents(); const exceptions = apiNotifications ? apiNotifications.map(notification => ({ title: notification.title, detail: notification.detail, kind: notification.kind })) : [...savedIncidents.map(incident => ({ title: `${incident.unit} · ${incident.type}`, detail: `${incident.location}. ${incident.description}`, kind: 'Exception' })), ...seedExceptions.map(exception => ({ title: exception.title, detail: exception.detail, kind: 'Exception' }))]; const records = [...getLoads().map(load => ({ title: `#${load.id} · ${load.origin} → ${load.destination}`, detail: `${load.customer} · Unit ${load.unit} · ${load.status}`, kind: 'Load' })), ...getFleet().map(vehicle => ({ title: `Unit ${vehicle.unit} · ${vehicle.driver}`, detail: `${vehicle.vehicle} · ${vehicle.location} · ${vehicle.status}`, kind: 'Fleet' })), ...(apiSops || procedures).map(procedure => ({ title: procedure.name, detail: `${procedure.department} · ${procedure.type}`, kind: 'SOP' }))]; const source = mode === 'exceptions' ? exceptions : records.filter(record => `${record.title} ${record.detail}`.toLowerCase().includes(query)); result.innerHTML = source.length ? source.map(record => `<div class="exception"><span class="severity ${record.kind === 'Exception' || record.kind === 'Incident' || record.kind === 'Load' ? '' : 'amber'}"></span><div class="exception-body"><strong>${escapeHtml(record.title)}</strong><p>${escapeHtml(record.detail)}</p></div><span class="exception-time">${escapeHtml(record.kind)}</span></div>`).join('') : '<div class="empty-state">No matching records.</div>'; }
+    function openQuickView(mode = 'search') { const search = document.getElementById('globalSearch'); const title = document.getElementById('quickTitle'); const subtitle = document.getElementById('quickSubtitle'); if (mode === 'exceptions') { title.textContent = 'Exceptions requiring action'; subtitle.textContent = 'Open items from dispatch, safety, and finance.'; search.value = ''; search.placeholder = 'Search open exceptions'; } else { title.textContent = 'CommandOS search'; subtitle.textContent = 'Find records across your operating network.'; search.placeholder = 'Search loads, units, drivers, SOPs, or exceptions'; } renderQuickResults(mode); openOverlay('quickOverlay'); search.focus(); search.oninput = () => renderQuickResults(mode); }
+    document.getElementById('globalSearchBtn').addEventListener('click', () => openQuickView('search'));
+    document.getElementById('notificationsBtn').addEventListener('click', () => openQuickView('exceptions'));
+    document.getElementById('allExceptions').addEventListener('click', () => openQuickView('exceptions'));
     document.getElementById('loadsBtn').addEventListener('click', openLoadBoard);
     document.getElementById('sopBtn').addEventListener('click', openSopCenter);
-    document.querySelectorAll('.sop-open').forEach(button => button.addEventListener('click', () => showToast('SOP opened for the operations team')));
+    document.querySelectorAll('.sop-open').forEach(button => button.addEventListener('click', () => openSopDetail(button.closest('.sop-item').querySelector('.sop-name').firstChild.textContent.trim())));
     document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => closeOverlay(button.dataset.close)));
     document.querySelectorAll('.overlay').forEach(overlay => overlay.addEventListener('click', event => { if (event.target === overlay) closeOverlay(overlay.id); }));
     document.querySelectorAll('#sopOverlay .filter-btn').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('#sopOverlay .filter-btn').forEach(filter => filter.classList.remove('active')); button.classList.add('active'); activeFilter = button.dataset.filter; renderSops(); }));
@@ -375,11 +950,13 @@
     document.getElementById('loadSearch').addEventListener('input', renderLoads);
     document.querySelectorAll('#fleetOverlay .filter-btn').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('#fleetOverlay .filter-btn').forEach(filter => filter.classList.remove('active')); button.classList.add('active'); renderFleet(); }));
     document.getElementById('fleetSearch').addEventListener('input', renderFleet);
-    document.querySelectorAll('.management-tab').forEach(tab => tab.addEventListener('click', () => { activeManagementView = tab.dataset.managementTab; document.querySelectorAll('.management-tab').forEach(item => item.classList.toggle('active', item === tab)); if (activeManagementView === 'audit') renderAudit(); else if (activeManagementView === 'users') renderUsers(); else renderManagement(); }));
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') { closeOverlay('sopOverlay'); closeOverlay('incidentOverlay'); closeOverlay('loadOverlay'); closeOverlay('fleetOverlay'); closeOverlay('managementOverlay'); } });
+    document.querySelectorAll('.management-tab').forEach(tab => tab.addEventListener('click', () => { activeManagementView = tab.dataset.managementTab; document.querySelectorAll('.management-tab').forEach(item => item.classList.toggle('active', item === tab)); if (activeManagementView === 'audit') renderAudit(); else if (activeManagementView === 'users') renderUsers(); else if (activeManagementView === 'documents') renderDocuments(); else renderManagement(); }));
+    document.getElementById('detailAcknowledge').addEventListener('click', () => { if (selectedSopCode) { acknowledgeSop(selectedSopCode); closeOverlay('sopDetailOverlay'); } });
+    document.getElementById('saveSettings').addEventListener('click', () => { localStorage.setItem('jackson-commandos-settings', JSON.stringify({ timezone: document.getElementById('timezoneSetting').value, refresh: document.getElementById('refreshSetting').value, notifications: document.getElementById('notificationSetting').value })); closeOverlay('settingsOverlay'); showToast('Settings saved'); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { closeOverlay('sopOverlay'); closeOverlay('sopDetailOverlay'); closeOverlay('incidentOverlay'); closeOverlay('loadOverlay'); closeOverlay('fleetOverlay'); closeOverlay('managementOverlay'); closeOverlay('settingsOverlay'); closeOverlay('quickOverlay'); } });
     document.getElementById('incidentForm').addEventListener('submit', async event => { event.preventDefault(); const incident = { type: document.getElementById('incidentType').value, severity: document.getElementById('incidentSeverity').value, unit: document.getElementById('incidentUnit').value, location: document.getElementById('incidentLocation').value, description: document.getElementById('incidentDescription').value, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }; if (apiMode) { const response = await fetch('/api/incidents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(incident) }); if (!response.ok) { showToast('Incident could not be saved. Try again.'); return; } apiIncidents.push(await response.json()); } else { const incidents = getSavedIncidents(); incidents.push(incident); localStorage.setItem(incidentStorageKey, JSON.stringify(incidents)); } renderExceptions(); closeOverlay('incidentOverlay'); event.target.reset(); showToast(`${incident.type} report created for ${incident.unit}`); });
     document.getElementById('signOut').addEventListener('click', async () => { if (apiMode) await fetch('/api/auth/logout', { method: 'POST' }); window.location.reload(); });
-    async function initializeRemoteData() { try { const health = await fetch('/api/health'); if (!health.ok) return; const session = await fetch('/api/auth/me'); if (session.status === 401) { document.getElementById('authScreen').classList.remove('hidden'); return; } if (!session.ok) return; const [loadsResponse, incidentsResponse] = await Promise.all([fetch('/api/loads'), fetch('/api/incidents')]); if (!loadsResponse.ok || !incidentsResponse.ok) return; apiLoads = await loadsResponse.json(); apiIncidents = await incidentsResponse.json(); apiMode = true; renderExceptions(); showToast('Connected to shared CommandOS data'); } catch (error) { apiMode = false; } }
+    async function initializeRemoteData() { try { const health = await fetch('/api/health'); if (!health.ok) return; const session = await fetch('/api/auth/me'); if (session.status === 401) { document.getElementById('authScreen').classList.remove('hidden'); return; } if (!session.ok) return; const sessionBody = await session.json(); currentUserRole = sessionBody.user.role; const [loadsResponse, incidentsResponse, fleetResponse, sopsResponse, financeResponse, warehousesResponse, documentsResponse, notificationsResponse] = await Promise.all([fetch('/api/loads'), fetch('/api/incidents'), fetch('/api/fleet'), fetch('/api/sops'), fetch('/api/finance'), fetch('/api/warehouses'), fetch('/api/documents'), fetch('/api/notifications')]); if (!loadsResponse.ok || !incidentsResponse.ok || !fleetResponse.ok || !sopsResponse.ok || !documentsResponse.ok) return; apiLoads = await loadsResponse.json(); apiIncidents = await incidentsResponse.json(); apiFleet = await fleetResponse.json(); apiSops = await sopsResponse.json(); apiDocuments = await documentsResponse.json(); if (financeResponse.ok) apiFinance = await financeResponse.json(); if (warehousesResponse.ok) apiWarehouses = await warehousesResponse.json(); if (notificationsResponse.ok) apiNotifications = await notificationsResponse.json(); apiMode = true; renderExceptions(); showToast('Connected to shared CommandOS data'); } catch (error) { apiMode = false; } }
     document.getElementById('authForm').addEventListener('submit', async event => { event.preventDefault(); const errorMessage = document.getElementById('authError'); errorMessage.classList.remove('visible'); const response = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: document.getElementById('authEmail').value, password: document.getElementById('authPassword').value }) }); if (!response.ok) { errorMessage.classList.add('visible'); return; } document.getElementById('authScreen').classList.add('hidden'); await initializeRemoteData(); });
     initializeRemoteData();
   </script>

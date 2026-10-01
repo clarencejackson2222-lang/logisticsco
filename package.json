@@ -5,7 +5,8 @@
   "description": "Jackson Logistics operations control center",
   "scripts": {
     "dev": "node server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test tests/api.test.js"
   },
   "engines": {
     "node": ">=20"
